@@ -1,0 +1,33 @@
+<table>
+	<thead>
+		<tr>
+			<th>Field</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Status</td>
+			<td>The status of the requested transaction.<br/>
+				Possible values:<br/>
+				<strong>Initialized:</strong> The Payment was initialized<br/>
+				<strong>Awaiting_Payment:</strong> The purchaser has accepted the terms & conditions and is preparing to pay<br/>
+				<strong>Authorized:</strong> The payment has been triggered by the purchaser and was seen in the bitcoin network. The purchaser is redirected from the cashier page back to your webshop.<br/>
+				<strong>Ready_for_Delivery:</strong> The number of confirmations specified in the p21PayByCrypto call have been reached<br/>
+				<strong>Cleared:</strong> The Payment was successful and will be settled<br/>
+				<strong>Settled:</strong> The Payment was settled<br/>
+				<strong>Expired:</strong> The Payment has expired<br/>
+				<strong>Cancelled:</strong> The Payment has been cancelled by the purchaser<br/>
+				<strong>Failed:</strong> The Payment has failed for other reasons<br/>
+			</td>
+		</tr>
+		<tr>
+			<td>Confirmations</td>
+			<td>
+				<strong>1..n:</strong> The number of confirmations in the Bitcoin network for the Bitcoin transaction from the purchaser<br/>
+				<strong>0:</strong> if the transaction is broadcast but not included in the blockchain<br/>
+				<strong>-1:</strong> If no transaction is received or an error occurred<br/>
+			</td>
+		</tr>
+	</tbody>
+</table>
