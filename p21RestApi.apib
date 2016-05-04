@@ -1,0 +1,1432 @@
+FORMAT: 1A
+HOST: https://app.payment21.com
+
+# Payment21® Crypto API
+
+The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface which can integrate well with any of their existing systems.
+
+#### Version
+
+<!-- include(version_table.html) -->
+
+#### Revision History
+
+Date    | Description        | Initials   | Version
+--------|--------------------|------------|----------
+26.03.12|Text edit on "Several Integration Methods"|YJ|1.01
+01.04.15|Update for crypto payment method|VB|1.02
+02.04.15|Copied all the other API we have in one doc: Button API, Cashier Page (Simple API before), E-Billing API|VB|1.03
+15.04.16|Changed Check to Crypto interfaces, minor changes, new interfaces (FVR, Refunds, E-Wallet)|VB|1.04
+13.10.15|Changed Payment21PayByCrypto Call|GS|1.05
+14.01.16|Aligned with current implementation|GS|1.06
+21.01.16|Editorial Update|BK|1.07
+28.01.16|Update and consolidate|GS/BK|1.08
+25.02.16|Rename required confirmations to delivery level|GS|1.09
+24.03.16|Editorial Update|CH|1.10
+02.05.16|Update for clarification|VB|1.11
+02.05.16|Adding Bitcoin Testnet and updating various items|BK|1.12
+
+
+## Confidentiality Notice
+
+This document and the information contained herein are for exclusive use of the recipient(s). Unless expressly stated otherwise in the document or with the prior written consent of Payment21®, partial or full copies of this document cannot be disclosed to any other persons or entities other than the recipient(s), and subject to acceptance of certain conditions under which access is granted. The content of this document may not be disclosed, in whole or in part in any prospectus, statement or documentation for registration, any documentation that is public domain, financing agreement, and any other agreements or public or private documents. 
+
+The information contained in this document is for the exclusive use of the person or entity to which it is addressed, containing confidential information and/or privileged information. Any review, retransmission, dissemination or other use by any person or any entity other than the recipient of this document is strictly prohibited. 
+
+If you have received this document in error, please contact the sender and delete the contents of any email, application or computer files. 
+
+**Contact Information**
+
+Moving Media GmbH  
+Support Team
+
+Bahnhofplatz 1-3 / PF#445  
+CH-9430 Sankt Margrethen SG  
+Switzerland
+
+E-Mail: support@payment21.com
+
+
+## 1 Payment21® Easy Integration Method
+
+**In order to begin accepting crypto payments online, you must connect your website to our payment gateway. The integration consists of two parts:**
+    
+A. Payment21® JSON/REST API
+
+B. Payment21® Cashier Page
+    
+The APIs are easy to integrate and you will be able to process transactions in a very short time.
+
+### 1.1 Supported Use Cases
+
+**The underlying API support the following use cases that are in general sufficient to perform crypto payment transaction.**
+
+![supported use cases](images/supported_use_cases.png)
+
+### 1.2 Payment21® JSON/REST API:  
+
+**A merchant can access the API by implementing functionality in the merchant’s site to communicate with our web service via the API.**
+
+Your software developer integrates the JSON API call directly in your application. If your consumer chooses “crypto currency" (Bitcoin, XBT) as a payment method, the merchant’s system creates the REST request in accordance with the JSON integration documentation and sends it to the Payment21® web service. Payment21® responds by letting your system know whether the information is valid. Your system then displays a confirmation page to the user to confirm the purchase and finalize the transaction. Finally, your system displays a transaction summary to the user containing all payment details as payment confirmation.
+
+Benefits for the merchant:  
+- Full session control
+- Use state-of-the-art API methods to communicate with Payment21®
+- Full transparency of transaction details
+
+### 1.3 Payment21® Cashier Page:
+
+**We provide a checkout user interface containing the payment details such as the Bitcoin address and a corresponding QR-Code.**
+
+![supported use cases](images/your_online_shop_payment_process.png)
+
+**Merchants simply redirect the purchaser to this cashier page where the consumer initiates the Bitcoin payment.**
+
+At the Payment21® Cashier Page, your consumer will see the required details for payment directly on our website. The consumer data will be transferred to the Payment21® system for verification, validation and processing. After the purchaser has completed the payment, he/she is redirected back to your site where you can display a confirmation page.
+
+See an example on the demo store: https://app.payment21.com/demoshop.html.
+
+### 1.4 Typical Payment Use Case
+
+**The integration of the Payment21® cashier page is easy, and consists only of a few steps.**
+
+The payment process is as follows: 
+
+1. The purchaser selects Payment21® for checkout
+2. Your application calls the API method “P21PayByCrypto”
+3. Your site redirects the purchaser to the returned URL
+4. The purchaser will see the cashier page and pay by Bitcoin
+5. After the payment is received, the purchaser is redirected back to your site
+6. Call the API method PaymentStatus to check if the payment was successful
+
+**Step 1: The purchaser selects Payment21® for checkout**  
+To enable purchasers to pay with Payment21, you have to add an option in your application.
+
+**Step 2: Your application calls the API method “P21PayByCrypto”**  
+Your application calls the API method P21PayByCrypto to initialize the payment. This call includes details such as the amount, vendor and purchaser details.
+
+Note: If you haven’t already created a vendor, you will need to create one using the API method CreateVendor.
+
+The P21PayByCrypto response contains a unique transaction-ID, which should be stored. You can use it to retrieve the status of the payment.
+
+The second value returned is a URL used subsequently.
+
+**Step 3: Your site redirects the purchaser to the returned URL**  
+You should now redirect the purchaser to the URL of the Payment21® Cashier Page retrieved in the P21PayByCrypto Call.
+
+**Step 4: The purchaser will see the cashier page and pay by Bitcoin**  
+As shown in the previous section, the purchaser can see the currency amount, fair value rate and the resulting Bitcoin amount. He can use a local Bitcoin wallet or a QR-Code to send the requested amount to Payment21®.
+
+**Step 5: After the payment is received, the purchaser is redirected back to your site**  
+We are continuously monitoring the Bitcoin blockchain to instantly detect the Bitcoin transaction sent by the purchaser. After the requested amount is received, we will redirect the purchaser from our cashier page back to your site. The URL will also include the Transaction-ID returned in step two.
+
+**Step 6: Call the API method PaymentStatus to check if the payment was successful**  
+You can call the API method PaymentStatus to check if the payment was successful and show a confirmation page to the purchaser.
+
+Note: You can query the PaymentStatus at any time. We recommend checking the status after a short period of time in case the purchaser has interrupted the flow (e.g. by closing their browser window).
+
+
+## 2 Payment21® JSON/REST API
+
+**The integration of Payment21® functionality is effected directly in the merchant's system using REST.**
+
+If the merchant’s consumer chooses the crypto payment method, then the merchant’s system creates the REST-request by using the matching JSON definition and sends it to the Payment21® REST web service. The Payment21® REST web service responds by returning the corresponding JSON reply to let your system know whether the request was valid and with generated data for the payment in case of successful request. Your page then uses this reply to display a confirmation page to the consumer. The consumer has to confirm the purchase to finalize the transaction. You can display the transaction summary to the user with all payment details as payment confirmation.
+
+The Payment21® JSON/REST web service contains additional endpoints to provide detailed information about each ongoing payment.
+
+### 2.1	JSON/REST API integration: How to integrate
+
+**A merchant can access the REST interface by coding the merchant’s website to communicate with our web service via the API.**
+
+> The web service is accessible from https://app.payment21.com/api/mapi, supporting HTTPS only. All data is sent and received as JSON.
+
+### 2.2 Service Operations
+
+**This document contains a number of important service operations.**
+
+**Input Parameters to process transactions**
+
+ Operation      | Description
+----------------|---------------
+ CreateVendor   | Creates a sub-merchant account (needed to split consumers among different vendors of a merchant)
+ UpdateVendor   | Update previously created vendor data
+ P21PayByCrypto | Creates a crypto payment request for the specified consumer
+ PaymentStatus  | Returns the status of the payment
+
+
+**Input Parameters to differ or combine merchant ID and vendor ID**
+
+The system creates a new merchant when the 5-Step-Sign-Up is performed on the frontend, hence, there is no separate “CreateMerchant operation” supported through an API call. A merchant ID is assigned to your account automatically. You can find more details under “Sandbox Test”.
+
+To start sending transactions you first need to create a vendor using the CreateVendor call.
+
+Merchants can create multiple vendors (i.e. sub-merchant accounts) to allocate transactions to specific vendors, shops, agents, branches, business divisions etc.
+
+If a merchant does not have multiple vendors, the merchant has to create a single vendor and treat these entry fields as wildcards. In this scenario, enter the company name of the merchant into the field “Company” etc. This wildcard vendor has to utilize the default merchant data and keep track of all transactions processed by the merchant.
+
+The merchant account is the parent account used for settling all the funds associated to the merchant and its vendors.
+
+### 2.3 Calling Conventions
+
+**Payment21® follows best practice coding conventions.**
+
+Following common REST conventions, the API uses JSON (JavaScript Object Notation) to encode values and objects, which is widespread used and human-readable to allow easy debugging.
+
+If the request can be fulfilled by Payment21®, the HTTP status code 200 will be returned, along with an optional response object containing further details.
+
+If the request is malformed, contains wrong or missing data, or we cannot process the request for any other reason, a HTTP status code different to 200 will be returned, e.g. 404 if the requested entity doesn’t exist.
+
+### 2.4 Supported HTTP Verbs
+
+<!-- include(supported_http_verbs.html) -->
+
+### 2.5 Authentication and Authorization
+
+**Payment21® maintains best practice security standards.**
+
+To authenticate yourself, you have to supply your **Merchant-ID** and **API Key** in every request. You will receive these credentials during the sign-up process and can change them through the Payment21® user interface.
+
+Please be aware that your API key provides access to the Payment21® system in your name. Therefore, treat it with the same caution as a sensitive password; i.e. store it in a safe place and do not pass it to unauthorized personnel.
+
+If your API key is lost or compromised, Payment21® can create a new one for you. For security reasons, we cannot recover your previous API key.
+
+## 3 Payment21® Cashier Page
+
+### 3.1 Introduction
+
+**The cashier page is made for a simple and fast integration and provides all the necessary user interactions of the purchaser to complete the payment.**
+
+You first announce the payment to Payment21® via the P21PayByCrypto API endpoint and redirect the purchaser to the cashier page hosted by Payment21.com. After the Bitcoin payment is made, the purchaser is redirected back to your site or confirmation page.
+
+Once you have integrated our cashier page, your consumer can pay for goods and services purchased by using “crypto currency” (Bitcoin, XBT). The API will transfer consumer data to the Payment21®-system for processing.
+
+If a consumer profile already exists in your database (that is, the merchant’s database) you can prefill fields such as consumer first name, last name, address and other contact information automatically. Other data fields related to the consumer’s payment are entered by the consumer and the payment is made by the consumer. We have additional security fields such as ID document, passport number and driver’s license number. The data entered will be stored in the Payment21® database for future resolution. 
+
+Payment21® will send an email to the consumer regarding his/her payment status. Additionally, the merchant receives a confirmation email containing the details of the transaction and purchase.
+
+### 3.2 What the merchant’s consumers will see
+
+**Once your site is ready to use the API, you can add Payment21® crypto payments to your payment options.**
+
+Your consumer can now choose to pay by “crypto currency” (Bitcoin, XBT). 
+
+Before the payment page is displayed for the consumer, the merchant sends information about the order through the API for verification, validation and authentication. This verification is done on the Payment21® side. Once the order information is successfully verified, the consumer will be redirected to the Payment21® crypto payment page. This is a secure form, which allows the consumer to pay using Bitcoin. See an example on the demo store: https://app.payment21.com/demoshop.html.
+
+As the first step, consumers have to explicitly agree with the Terms and Conditions by marking a checkbox and clicking “Confirm”.
+
+![name](images/payment_details.jpg)
+
+After confirming, the consumer is shown a QR-Code along with their payment details. 
+
+![name](images/payment_process.jpg)
+
+Consumers will see the crypto payment page with the QR-Code on the Payment21® cashier page. The consumer has to accept and submit the crypto payment using their Bitcoin wallet.
+
+Once the consumer completes the crypto payment, it is tracked over the blockchain.
+
+After the submitted transaction has been sent to the Payment21® system and is detected on the blockchain, the user is shown a confirmation page and a link that redirects them to the merchant’s site.
+
+The consumer of the crypto transaction gets an email receipt mentioning purchasing details and the status of the payment "Approved" once the transaction is successful.
+
+You as a merchant also get a notification email. This email message has the consumer’s transaction information such as amount and the transaction status of "Approved" on it.
+
+### 3.3 How to integrate
+
+**The integration of the Payment21® cashier page is easy, and consists only of a few steps.**
+
+The payment process is as follows: 
+
+1. The purchaser selects Payment21® for checkout
+2. Your application calls the API method “P21PayByCrypto”
+3. Your site redirects the purchaser to the returned URL
+4. The purchaser will see the cashier page and pay by Bitcoin
+5. After the payment is received, the purchaser is redirected back to your site
+6. Call the API method PaymentStatus to check if the payment was successful
+
+**Step 1: The purchaser selects Payment21® for checkout**  
+To enable purchasers to pay with Payment21, you have to add an option in your application.
+
+**Step 2: Your application calls the API method “P21PayByCrypto”**  
+Your application calls the API method P21PayByCrypto to initialize the payment. This call includes details such as the amount, vendor and purchaser details.
+
+Note: If you haven’t already created a vendor, you will need to create one using the API method CreateVendor.
+
+The P21PayByCrypto response contains a unique transaction-ID, which should be stored. You can use it to retrieve the status of the payment.
+
+The second value returned is a URL used subsequently.
+
+**Step 3: Your site redirects the purchaser to the returned URL**  
+You should now redirect the purchaser to the URL of the Payment21® Cashier Page retrieved in the P21PayByCrypto Call.
+
+**Step 4: The purchaser will see the cashier page and pay by Bitcoin**  
+As shown in the previous section, the purchaser can see the currency amount, fair value rate and the resulting Bitcoin amount. He can use a local Bitcoin wallet or a QR-Code to send the requested amount to Payment21®.
+
+**Step 5: After the payment is received, the purchaser is redirected back to your site**  
+We are continuously monitoring the Bitcoin blockchain to instantly detect the Bitcoin transaction sent by the purchaser. After the requested amount is received, we will redirect the purchaser from our cashier page back to your site. The URL will also include the Transaction-ID returned in step two. 
+
+**Step 6: Call the API method PaymentStatus to check if the payment was successful**  
+You can call the API method PaymentStatus to check if the payment was successful and show a confirmation page to the purchaser.
+
+Note: You can query the PaymentStatus at any time. We recommend checking the status after a short period of time in case the purchaser has interrupted the flow (e.g. by closing their browser window).
+
+
+## 4 Sandbox API Connectivity Test
+
+**During the signup process, you need to test the API connectivity through the sandbox test application in your merchant account back office. This enables you to test your API implementation in an early stage of your onboarding process with Payment21.com.**
+
+To start the sandbox test, login with the credentials you used for the 5 step sign-up and navigate to the Sandbox Test:
+
+![name](images/sandbox_test.png)
+
+After clicking on “Generate Merchant API Key”, you will see your merchant ID and your API key as shown below:
+
+![name](images/api_key.png)
+
+Using these credentials, you can call the method P21PayByCrypto using a different URL than in production:
+
+/api/mapi/sandbox/p21PayByCrypto (instead of /api/mapi/p21PayByCrypto).
+
+For simplicity, some checks are omitted in the sandbox. For example, you can specify any vendor ID if you haven’t created a vendor yet. The success and error responses returned by the sandbox are identical to the live system.
+
+Before you start implementing and calling the sandbox service, you need to enter a redirect URL, which should be part of your website. After the purchaser has completed the payment, he/she is redirected to this URL. You can include the value “{transactionId}”, which is automatically replaced with the ID of the completed transaction. This enables you to identify the payment when the purchaser is redirected from the cashier page back to your site.
+
+After you successfully called the sandbox API method, you can continue with the Payment21® merchant onboarding process.
+
+### 4.1 Bitcoin Testnet
+
+**If you want to test our Bitcoin Cashier System with the Bitcoin Testnet, you need to set up your Test Wallet first.**
+
+The Bitcoin testnet is an alternative Bitcoin block chain, to be used for testing. Testnet coins are separate and distinct from actual Bitcoins, and are never supposed to have any value. This allows application developers or Bitcoin testers to experiment, without having to use real Bitcoins.
+
+https://en.bitcoin.it/wiki/Testnet
+
+If you want to test the Payment21® Bitcoin Cashier System with real Bitcoins, you need to set up your Bitcoin Wallet and purchase Bitcoin first. 
+
+https://bitcoin.org/en/getting-started
+
+
+## 5 Appendix
+
+### 5.1 API Response & Error Codes
+
+**Payment21® provide a full set of response and error codes.**
+
+The JSON/REST API will return HTTP Status Code 200 if the request was processed successfully. Other codes signal errors as defined in the HTTP Protocol. To provide detailed information about the cause, an error object will be returned. It contains a field “error” with a string that is described in the table below.
+
+ Error Code | HTTP Status | Message
+------------|-------------|--------------------------
+ OK          | 200         | Request was successful
+ BAD_REQUEST | 400 | General error, e.g. the request contained invalid data
+ LOW_PAYMENT_AMOUNT | 400 | The requested payment amount is too low
+ WRONG_USERNAME_OR_PASSWORD | 401 | The supplied credentials are incorrect or don’t match
+ MERCHANT_DISABLED | 403 | The merchant account is disabled
+ MERCHANT_NOT_APPROVED | 403 | The merchant is currently not approved
+ PURCHASER_NOT_VERIFIED | 403 | The purchaser is not verified (for merchants who only accept verified purchasers)
+ MAPI_UNKNOWN_VENDOR | 404 | The given vendor ID is unknown
+ ENTITY_NOT_FOUND | 404 | A general error that the requested entity is not found
+ MAPI_CONTACT_CUSTOMER_SUPPORT | 403 | The call couldn’t be completed, contact Payment21® customer support for manual resolution
+ INTERNAL_SERVER_ERROR | 500 | An unknown error occurred, please try again later or contact Payment21® for clarification
+
+**Payment21® Crypto (P21PayByCrypto) Error Response Example:**
+
+```
+HTTP/1.1 404 Not Found
+Server: Apache-Coyote/1.1
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: DENY
+Content-Type: application/json;charset=UTF-8
+Date: Thu, 14 Jan 2016 22:08:07 GMT
+Connection: close
+Content-Length: 28
+
+{
+  "error":"ENTITY_NOT_FOUND"
+}
+```
+# Group API Reference
+
+## CreateVendor [POST /api/mapi/createVendor]
+
+This request provides all required information in order to assign a new vendor to a particular merchant. This will allow to send payments for a particular vendor and track transactions separately. As a response – you will receive a newly generated vendor-ID, which has to be stored and used in other interface requests.			
+	
++ Request (application/json;charset=UTF-8)
+
+    + Headers
+
+			Accept: application/json, application/*+json
+			Cache-Control: no-cache
+			Pragma: no-cache
+			User-Agent: Java/1.8.0_25
+			Host: app.payment21.com
+			Connection: close
+			Content-Length: 1671
+
+
+    + Body
+
+			{ 
+			  "merchantId": "-1",
+			  "apiKey": "demoshopMerchantApiKey",
+			  "email": "info@abccompany.com", 
+			  "company": "abc company",
+			  "url": "http://www.abccompany.com",
+			  "monthlyTnxNum": "500",
+			  "avgTnxSize": "20",
+			  "refunds": "5",
+			  "chargebacks": "2",
+			  "affilliate": "affilliateName",
+			  "ownershipType": "SoleProprietor",
+			  "dba": "Slingshot",
+			  "billingAddress": "123 90th Street",
+			  "billingPostalCode": "11209", 
+			  "billingCity": "Brooklyn",
+			  "billingState": "N.Y.",
+			  "billingCountry": "USA", 
+			  "mailingAddress": "123 90th Street",
+			  "mailingPostalCode": "11209", 
+			  "mailingCity": "Brooklyn",
+			  "mailingState": "N.Y.",
+			  "mailingCountry": "USA",
+			  "phone": "718 123 4567",
+			  "fax": "718 123 4568",
+			  "taxIdNumber": "123456578",
+			  "branch": "Bay Ridge",
+			  "mcc": "1234",
+			  "products": "personal hygiene products",
+			  "license": "5678890", 
+			  "licenseGeolocation": "USA",
+			  "webUrl": "http://www.abccompany.com/admin",
+			  "contractingParty": "contracting party name",
+			  "signingPerson": "Boss X",
+			  "technicalContact": "Technician Y",
+			  "technicalEmail": "support@abccompany.com",
+			  "technicalPhone": "718 098 7654",
+			  "ipAddress": "0.0.0.0", 
+			  "billingDescriptor": "billingDescriptor",
+			  "beneficiaryName": "John Doe Beneficiary", 
+			  "beneficiaryDOB": "1981-01-11",
+			  "beneficiaryEquityOwnership": "0.65",
+			  "beneficiaryAddress": "765 59th Street",
+			  "beneficiaryCity": "Brooklyn",
+			  "beneficiaryState": "N.Y.",
+			  "beneficiaryCountry": "USA",
+			  "beneficiaryPhone": "718 346 3622",
+			  "beneficiaryIdDoc": "9393373",
+			  "beneficiaryIdDocCountry": "USA",
+			  "beneficiaryCitizenship": "USA",
+			  "beneficiaryDrivingLicence": "81224345"
+			}	
+
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"merchantId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Merchant User ID as assigned by Payment21.com"
+				},
+				"apiKey": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Merchant API Key as assigned by Payment21.com"
+				},
+				"monthlyTnxNum": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Potential number of monthly transactions"
+				},
+				"avgTnxSize": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Average transaction size"
+				},
+				"refunds": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Refunds per month"
+				},
+				"chargebacks": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Chargebacks per month"
+				},
+				"email": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Vendor email"
+				},
+				"affiliate": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor affiliate name"
+				},
+				"company": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Vendor company name"
+				},
+				"ownershipType": {
+				  "type": "string",
+				  "enum": ["SoleProprietor", "Corporate"],
+				  "description": "Ownership type: SoleProprietor, Corporate"
+				},
+				"dba": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor trade name"
+				},
+				"billingAddress": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Registration address"
+				},
+				"billingPostalCode": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Registration postal code"
+				},
+				"billingCity": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Registration city"
+				},
+				"billingState": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Registration state"
+				},
+				"billingCountry": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Country of registration, ISO 3166"
+				},
+				"mailingAddress": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Physical location address"
+				},
+				"mailingPostalCode": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Physical location postal code"
+				},
+				"mailingCity": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Physical location city"
+				},
+				"mailingState": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Physical location state"
+				},
+				"mailingCountry": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Country of physical location, ISO 3166"
+				},
+				"phone": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor phone"
+				},
+				"fax": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor fax"
+				},
+				"taxIDNumber": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor tax number"
+				},
+				"branch": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor branch of operation"
+				},
+				"mcc": {
+				  "type": "string",
+				  "maxLength": 4,
+				  "description": "Vendor category code (ISO 18245)"
+				},
+				"products": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor products description"
+				},
+				"license": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "License ID of the vendor required in case MCC is within specific values"
+				},
+				"licenseGeolocation": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Country of license applicability, ISO 3166"
+				},
+				"webUrl": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor website URL"
+				},
+				"contractingParty": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor contracting party name"
+				},
+				"signingPerson": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Signing person"
+				},
+				"technicalContact": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Technical contact"
+				},
+				"technicalEmail": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Email of technical contact"
+				},
+				"techPhone": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Phone number of technical contact"
+				},
+				"ecommerceUrl": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "URL of the shop where consumers are purchasing goods and services"
+				},
+				"ipAddress": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor IP address"
+				},
+				"billingDescriptor": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Billing descriptor to be used in the transactions description as vendor billing descriptor"
+				},
+				"beneficiaryName": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Name of primary beneficial owner of contracting party"
+				},
+				"beneficiaryDOB": {
+				  "type": "string",
+				  "format": "date",
+				  "description": "Vendor beneficiary date of birth"
+				},
+				"beneficiaryEquityOwnership": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary equity ownership, in percent"
+				},
+				"beneficiaryAddress": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary address"
+				},
+				"beneficiaryCity": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary city"
+				},
+				"beneficiaryState": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary state"
+				},
+				"beneficiaryCountry": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary country, ISO 3166"
+				},
+				"beneficiaryPhone": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary phone number"
+				},
+				"beneficiaryIdDoc": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary ID document"
+				},
+				"beneficiaryIdDocCountry": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary ID document issue country, ISO 3166"
+				},
+				"beneficiaryCitizenship": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary citizenship, ISO 3166"
+				},
+				"beneficiaryDrivingLicence": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary driving license"
+				}
+			  },
+			  "required": [
+				"merchantId",
+				"apiKey",
+				"email",
+				"company"
+			  ]
+			}
+
++ Response 200 (application/json;charset=UTF-8)
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 22:17:35 GMT
+			Connection: close
+			Content-Length: 130
+
+    + Body
+
+			{
+			  "vendorID":"59"
+			}
+
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"vendorID": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,	  
+				  "description": "Vendor ID assigned by Payment21.com"
+				}
+			  },
+			  "required": [
+				"vendorID"
+			  ]
+			}
+
+## UpdateVendor [POST /api/mapi/updateVendor]			
+
+This request updates all required information of a vendor associated to the given merchant. To identify the vendor, the ID returned from the CreateVendor API call has to be supplied.
+			
++ Request (application/json;charset=UTF-8)
+
+    + Headers
+
+            Accept: application/json, application/*+json
+			Cache-Control: no-cache
+			Pragma: no-cache
+			User-Agent: Java/1.8.0_25 
+			Host: app.payment21.com
+			Connection: close
+			Content-Length: 1686
+
+    + Body
+
+			{ 
+			  "id": "59",
+			  "merchantId": "-1",
+			  "apiKey": "demoshopMerchantApiKey",
+			  "email": "info@abccompany.com", 
+			  "company": "abc company",
+			  "url": "http://www.abccompany.com",
+			  "monthlyTnxNum": "500",
+			  "avgTnxSize": "20",
+			  "refunds": "5",
+			  "chargebacks": "2",
+			  "affilliate": "affilliateName",
+			  "ownershipType": "SolePropriator",
+			  "dba": "Slingshot",
+			  "billingAddress": "123 90th Street",
+			  "billingPostalCode": "11209", 
+			  "billingCity": "Brooklyn",
+			  "billingState": "N.Y.",
+			  "billingCountry": "USA", 
+			  "mailingAddress": "123 90th Street",
+			  "mailingPostalCode": "11209", 
+			  "mailingCity": "Brooklyn",
+			  "mailingState": "N.Y.",
+			  "mailingCountry": "USA",
+			  "phone": "718 123 4567",
+			  "fax": "718 123 4568",
+			  "taxIdNumber": "123456578",
+			  "branch": "Bay Ridge",
+			  "mcc": "1234",
+			  "products": "personal hygiene products",
+			  "license": "5678890", 
+			  "licenseGeolocation": "USA",
+			  "webUrl": "http://www.abccompany.com/admin",
+			  "contractingParty": "contracting party name",
+			  "signingPerson": "Boss X",
+			  "technicalContact": "Technician Y",
+			  "technicalEmail": "support@abccompany.com",
+			  "technicalPhone": "718 098 7654",
+			  "ipAddress": "0.0.0.0", 
+			  "billingDescriptor": "billingDescriptor",
+			  "beneficiaryName": "John Doe Beneficiary", 
+			  "beneficiaryDOB": "1981-01-11",
+			  "beneficiaryEquityOwnership": "0.65",
+			  "beneficiaryAddress": "765 59th Street",
+			  "beneficiaryCity": "Brooklyn",
+			  "beneficiaryState": "N.Y.",
+			  "beneficiaryCountry": "USA",
+			  "beneficiaryPhone": "718 346 3622",
+			  "beneficiaryIdDoc": "9393373",
+			  "beneficiaryIdDocCountry": "USA",
+			  "beneficiaryCitizenship": "USA",
+			  "beneficiaryDrivingLicence": "81224345"
+			}
+
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"id": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "The ID of the vendor to update as returned by CreateVendor"
+				},  
+				"merchantId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Merchant User ID as assigned by Payment21.com"
+				},
+				"apiKey": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Merchant API Key as assigned by Payment21.com"
+				},
+				"monthlyTnxNum": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Potential number of monthly transactions"
+				},
+				"avgTnxSize": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Average transaction size"
+				},
+				"refunds": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Refunds per month"
+				},
+				"chargebacks": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Chargebacks per month"
+				},
+				"email": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Vendor email"
+				},
+				"affiliate": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor affiliate name"
+				},
+				"company": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Vendor company name"
+				},
+				"ownershipType": {
+				  "type": "string",
+				  "enum": ["SoleProprietor", "Corporate"],
+				  "description": "Ownership type: SoleProprietor, Corporate"
+				},
+				"dba": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor trade name"
+				},
+				"billingAddress": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Registration address"
+				},
+				"billingPostalCode": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Registration postal code"
+				},
+				"billingCity": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Registration city"
+				},
+				"billingState": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Registration state"
+				},
+				"billingCountry": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Country of registration, ISO 3166"
+				},
+				"mailingAddress": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Physical location address"
+				},
+				"mailingPostalCode": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Physical location postal code"
+				},
+				"mailingCity": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Physical location city"
+				},
+				"mailingState": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Physical location state"
+				},
+				"mailingCountry": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Country of physical location, ISO 3166"
+				},
+				"phone": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor phone"
+				},
+				"fax": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor fax"
+				},
+				"taxIDNumber": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor tax number"
+				},
+				"branch": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor branch of operation"
+				},
+				"mcc": {
+				  "type": "string",
+				  "maxLength": 4,
+				  "description": "Vendor category code (ISO 18245)"
+				},
+				"products": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor products description"
+				},
+				"license": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "License ID of the vendor required in case MCC is within specific values"
+				},
+				"licenseGeolocation": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Country of license applicability, ISO 3166"
+				},
+				"webUrl": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor website URL"
+				},
+				"contractingParty": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor contracting party name"
+				},
+				"signingPerson": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Signing person"
+				},
+				"technicalContact": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Technical contact"
+				},
+				"technicalEmail": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Email of technical contact"
+				},
+				"techPhone": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Phone number of technical contact"
+				},
+				"ecommerceUrl": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "URL of the shop where consumers are purchasing goods and services"
+				},
+				"ipAddress": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor IP address"
+				},
+				"billingDescriptor": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Billing descriptor to be used in the transactions description as vendor billing descriptor"
+				},
+				"beneficiaryName": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Name of primary beneficial owner of contracting party"
+				},
+				"beneficiaryDOB": {
+				  "type": "string",
+				  "format": "date",
+				  "description": "Vendor beneficiary date of birth"
+				},
+				"beneficiaryEquityOwnership": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary equity ownership, in percent"
+				},
+				"beneficiaryAddress": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary address"
+				},
+				"beneficiaryCity": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary city"
+				},
+				"beneficiaryState": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary state"
+				},
+				"beneficiaryCountry": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary country, ISO 3166"
+				},
+				"beneficiaryPhone": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary phone number"
+				},
+				"beneficiaryIdDoc": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary ID document"
+				},
+				"beneficiaryIdDocCountry": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary ID document issue country, ISO 3166"
+				},
+				"beneficiaryCitizenship": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary citizenship, ISO 3166"
+				},
+				"beneficiaryDrivingLicence": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Vendor beneficiary driving license"
+				}
+			  },
+			  "required": [
+				"id",
+				"merchantId",
+				"apiKey",
+				"email",
+				"company"
+			  ]
+			}
+
++ Response 200 (application/json;charset=UTF-8)
+
+	This method doesn’t return any information if successfully called. Please see the API error section for further details.
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 22:17:35 GMT
+			Connection: close
+			Content-Length: 0
+
+
+## P21PayByCrypto [POST /api/mapi/p21PayByCrypto]
+
+Input Parameters (An object of “Payment21® Crypto Payment (P21PayByCrypto)” with the following member variables):
+
++ Request (application/json;charset=UTF-8)
+
+    + Headers
+
+			Accept: application/json, application/*+json
+			Cache-Control: no-cache
+			Pragma: no-cache
+			User-Agent: Java/1.8.0_25 
+			Host: app.payment21.com
+			Connection: close
+			Content-Length: 539
+
+
+    + Body
+
+			{
+				"merchantId" : "-1",
+				"vendorId" : "-1",
+				"apiKey" : "61d3fe9e-1610-4574-8977-40e500962e67",
+				"orderAmount" : 20,
+				"orderCurrency" : "USD",
+				"itemDescription" : "Milk",
+				"itemCode" : "a17",
+				"partnerTransId" : "pt8274",
+				"merchantConsumerId" : "-2",
+				"merchantTransId" : "mt32789",
+				"firstName" : "John",
+				"lastName" : "Smith",
+				"dateOfBirth" : "1970-12-27",
+				"docId" : "D234890",
+				"phone" : "+1123456789",
+				"email" : "john@abccompanyChange.com",
+				"address1" : "123 First Street",
+				"address2" : "",
+				"driverLicenseNumber" : "ddr-1234",
+				"passportNumber" : "GW34576",
+				"city" : "New York",
+				"state" : "NY",
+				"postalCode" : "12345",
+				"country" : "US",
+				"deliveryLevel" : 3
+			}
+
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"merchantId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Merchant User ID as assigned by Payment21.com"
+				},
+				"apiKey": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Merchant API Key as assigned by Payment21.com"
+				},
+				"vendorId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Vendor ID as assigned by Payment21.com"
+				},
+				"orderAmount": {
+				  "type": "number",
+				  "description": "Order amount"
+				},
+				"orderCurrency": {
+				  "type": "string",
+				  "description": "Currency code, ISO 4217"
+				},
+				"itemDescription": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Item description"
+				},
+				"itemCode": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Code of the item"
+				},
+				"partnerTransID": {
+				  "type": "string",
+				  "maxLength": 36,
+				  "description": "Merchant partner transaction ID"
+				},
+				"merchantConsumerId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 36,
+				  "description": "An ID which uniquely identifies the purchaser of the given vendor. Successive calls have to use the same id for the same purchaser."
+				},
+				"merchantTransId": {
+				  "type": "string",
+				  "maxLength": 36,
+				 "description": "Merchant transaction ID"
+				},
+				"firstName": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Consumer’s first name"
+				},
+				"lastName": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Consumer’s last name"
+				},
+				"dateOfBirth": {
+				  "type": "string",
+				  "format": "date",
+				  "description": "Consumer’s date of birth"
+				},
+				"docId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Identification document number"
+				},
+				"phone": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Consumer’s phone"
+				},
+				"email": {
+				  "type": "string",
+				  "description": "Consumer’s email address"
+				},
+				"address1": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				 "description": "Consumer’s address field one"
+				},
+				"address2": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Consumer’s address field two"
+				},
+				"driverLicenseNumber": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Consumer’s driver license number"
+				},
+				"passportNumber": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Consumer’s passport number"
+				},
+				"city": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Consumer’s address city"
+				},
+				"state": {
+				  "type": "string",
+				  "maxLength": 50,
+				  "description": "Consumer’s address state code"
+				},
+				"postalCode": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 10,
+				  "description": "5 digit postal code in the consumer’s country (or ZIP)"
+				},
+				"country": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Consumer’s country, e.g. “United Kingdom”"
+				},
+				"deliveryLevel": {
+				  "type": "number",
+				  "description": "The number of confirmations in the Bitcoin blockchain to wait for until the status Ready for Delivery is reached. If set to 0, the status is reached as soon as the transaction was broadcast in the bitcoin network. See operation PaymentStatus for more details."
+				}
+			  },
+			  "required": [
+				"merchantId",
+				"apiKey",
+				"vendorId",
+				"orderAmount",
+				"orderCurrency",
+				"itemDescription",
+				"itemCode",
+				"merchantConsumerId",
+				"firstName",
+				"lastName",
+				"dateOfBirth",
+				"docId",
+				"email",
+				"address1",
+				"city",
+				"postalCode",
+				"country",
+				"deliveryLevel"
+			  ]
+			}
+
++ Response 200 (application/json;charset=UTF-8)
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 17:42:31 GMT
+			Connection: close
+			Content-Length: 135
+
+
+    + Body
+
+			{
+				"transactionId":"587a1892-18be-4836-aa0c-a7f7255cf974",
+				"redirectTo":"https://www.payment21.com/pay.html#/!/?transactionId=587a1892-18be-4836-aa0c-a7f7255cf974"
+			}
+
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"transactionId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Contains transaction ID of the added transaction"
+				},
+				"redirectTo": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 250,
+				  "description": "The URL the purchaser needs to be redirected to"
+				}
+			  },
+			  "required": [
+				"transactionId",
+				"redirectTo"
+			  ]
+			}
+
+
+## PaymentStatus [POST /api/mapi/paymentStatus]
+
+**Return Response:**
+
+<!-- include(payment_status_table.html) -->
+
++ Request (application/json;charset=UTF-8)
+
+    + Headers
+
+			Accept: application/json, application/*+json
+			Cache-Control: no-cache
+			Pragma: no-cache
+			User-Agent: Java/1.8.0_25 
+			Host: app.payment21.com
+			Connection: close
+			Content-Length: 126
+
+    + Body
+
+			{ 
+			  "merchantId": "-1",
+			  "apiKey": "demoshopMerchantApiKey",
+			  "transactionId": "4e1736f3-17bd-4477-9159-3bcfa8685bbd"
+			}
+
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"merchantId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Merchant User ID as assigned by Payment21.com"
+				},
+				"apiKey": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Merchant API Key as assigned by Payment21.com"
+				},
+				"transactionId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "The transaction ID for which to get the status"
+				}
+			  },
+			  "required": [
+				"merchantId",
+				"apiKey",
+				"transactionId"
+			  ]
+			}
+
++ Response 200 (application/json;charset=UTF-8)
+
+    + Body
+
+			{
+				"status":"Initialized",
+				"confirmations": 3,
+			}
+
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"status": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "The status of the requested transaction."
+				},
+				"confirmations": {
+				  "type": "integer",
+				  "description": "The number of confirmations in the Bitcoin network for the Bitcoin transaction from the purchaser"
+				}
+			  },
+			  "required": [
+				"status"
+			  ]
+			}
