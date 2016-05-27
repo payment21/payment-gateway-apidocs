@@ -1,5 +1,5 @@
 FROM alpine:latest
-MAINTAINER Brendan Dahl <dahl.brendan@gmail.com>
+MAINTAINER Payment 21 Dev <devteam@payment21.com>
 
 RUN apk add --update --no-progress alpine-sdk nodejs unrar bash git
 
