@@ -1,1 +1,1 @@
-aglio --theme-variables ./my_style.less --theme-full-width -i p21RestApi.apib -o test.html
+aglio --theme-variables ./my_style.less --theme-full-width -i p21RestApi.apib -o p21RestApi.html
