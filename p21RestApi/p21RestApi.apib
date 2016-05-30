@@ -1,9 +1,9 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.12
+# Payment21® Crypto API 1.13
 
-The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface which can integrate well with any of their existing systems.
+The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
 #### Version
 
@@ -13,27 +13,20 @@ The purpose of this document is to describe the requirements, usage, implementat
 
 Date    | Description        | Initials   | Version
 --------|--------------------|------------|----------
-26.03.12|Text edit on "Several Integration Methods"|YJ|1.01
-01.04.15|Update for crypto payment method|VB|1.02
-02.04.15|Copied all the other API we have in one doc: Button API, Cashier Page (Simple API before), E-Billing API|VB|1.03
-15.04.16|Changed Check to Crypto interfaces, minor changes, new interfaces (FVR, Refunds, E-Wallet)|VB|1.04
-13.10.15|Changed Payment21PayByCrypto Call|GS|1.05
-14.01.16|Aligned with current implementation|GS|1.06
-21.01.16|Editorial Update|BK|1.07
-28.01.16|Update and consolidate|GS/BK|1.08
 25.02.16|Rename required confirmations to delivery level|GS|1.09
 24.03.16|Editorial Update|CH|1.10
 02.05.16|Update for clarification|VB|1.11
-02.05.16|Adding Bitcoin Testnet and updating various items|BK|1.12
+03.05.16|Adding Bitcoin Testnet and updating various items|BK|1.12
+19.05.16|Adding PUT, GET, PATCH|RM|1.13
 
 
 ## Confidentiality Notice
 
-This document and the information contained herein are for exclusive use of the recipient(s). Unless expressly stated otherwise in the document or with the prior written consent of Payment21®, partial or full copies of this document cannot be disclosed to any other persons or entities other than the recipient(s), and subject to acceptance of certain conditions under which access is granted. The content of this document may not be disclosed, in whole or in part in any prospectus, statement or documentation for registration, any documentation that is public domain, financing agreement, and any other agreements or public or private documents. 
+This document and the information contained herein are for exclusive use of the recipient(s). Unless expressly stated otherwise in the document or with the prior written consent of Payment21®, partial or full copies of this document cannot be disclosed to any other persons or entities other than the recipient(s), and subject to acceptance of certain conditions under which access is granted. The content of this document may not be disclosed, in whole or in part in any prospectus, statement or documentation for registration, any documentation that is public domain, financing agreement, and any other agreements or public or private documents.
 
-The information contained in this document is for the exclusive use of the person or entity to which it is addressed, containing confidential information and/or privileged information. Any review, retransmission, dissemination or other use by any person or any entity other than the recipient of this document is strictly prohibited. 
+The information contained in this document is for the exclusive use of the person or entity to which it is addressed, containing confidential information and/or privileged information. Any review, retransmission, dissemination or other use by any person or any entity other than the recipient of this document is strictly prohibited.
 
-If you have received this document in error, please contact the sender and delete the contents of any email, application or computer files. 
+If you have received this document in error, please contact the sender and delete the contents of any email, application or computer files.
 
 **Contact Information**
 
@@ -49,12 +42,12 @@ E-Mail: support@payment21.com
 
 ## 1 Payment21® Easy Integration Method
 
-**In order to begin accepting crypto payments online, you must connect your website to our payment gateway. The integration consists of two parts:**
+**In order to begin accepting Bitcoin payments online, you must connect your website to our payment gateway. The Payment21® integration consists of two parts:**
     
 A. Payment21® JSON/REST API
 
-B. Payment21® Cashier Page
-    
+B. Payment21® Cashier Page  
+
 The APIs are easy to integrate and you will be able to process transactions in a very short time.
 
 ### 1.1 Supported Use Cases
@@ -65,7 +58,7 @@ The APIs are easy to integrate and you will be able to process transactions in a
 
 ### 1.2 Payment21® JSON/REST API:  
 
-**A merchant can access the API by implementing functionality in the merchant’s site to communicate with our web service via the API.**
+**A merchant can access the Payment21 Web Service by implementing our REST API in the merchant’s site.**
 
 Your software developer integrates the JSON API call directly in your application. If your consumer chooses “crypto currency" (Bitcoin, XBT) as a payment method, the merchant’s system creates the REST request in accordance with the JSON integration documentation and sends it to the Payment21® web service. Payment21® responds by letting your system know whether the information is valid. Your system then displays a confirmation page to the user to confirm the purchase and finalize the transaction. Finally, your system displays a transaction summary to the user containing all payment details as payment confirmation.
 
@@ -105,7 +98,7 @@ To enable purchasers to pay with Payment21, you have to add an option in your ap
 **Step 2: Your application calls the API method “P21PayByCrypto”**  
 Your application calls the API method P21PayByCrypto to initialize the payment. This call includes details such as the amount, vendor and purchaser details.
 
-Note: If you haven’t already created a vendor, you will need to create one using the API method CreateVendor.
+Note: If you have not already created a vendor, you will need to create one using the API method CreateVendor.
 
 The P21PayByCrypto response contains a unique transaction-ID, which should be stored. You can use it to retrieve the status of the payment.
 
@@ -118,7 +111,7 @@ You should now redirect the purchaser to the URL of the Payment21® Cashier Page
 As shown in the previous section, the purchaser can see the currency amount, fair value rate and the resulting Bitcoin amount. He can use a local Bitcoin wallet or a QR-Code to send the requested amount to Payment21®.
 
 **Step 5: After the payment is received, the purchaser is redirected back to your site**  
-We are continuously monitoring the Bitcoin blockchain to instantly detect the Bitcoin transaction sent by the purchaser. After the requested amount is received, we will redirect the purchaser from our cashier page back to your site. The URL will also include the Transaction-ID returned in step two.
+We are continuously monitoring the Bitcoin blockchain to detect the Bitcoin transaction sent by the purchaser instantly. After the requested amount is received, we will redirect the purchaser from our cashier page back to your site. The URL will also include the Transaction-ID returned in step two.
 
 **Step 6: Call the API method PaymentStatus to check if the payment was successful**  
 You can call the API method PaymentStatus to check if the payment was successful and show a confirmation page to the purchaser.
@@ -134,11 +127,13 @@ If the merchant’s consumer chooses the crypto payment method, then the merchan
 
 The Payment21® JSON/REST web service contains additional endpoints to provide detailed information about each ongoing payment.
 
-### 2.1	JSON/REST API integration: How to integrate
+
+### 2.1 JSON/REST API Integration: How to integrate
 
 **A merchant can access the REST interface by coding the merchant’s website to communicate with our web service via the API.**
 
-> The web service is accessible from https://app.payment21.com/api/mapi, supporting HTTPS only. All data is sent and received as JSON.
+The web service is accessible from https://app.payment21.com/api/mapi, supporting HTTPS only. All data is sent and received as JSON.
+
 
 ### 2.2 Service Operations
 
@@ -166,6 +161,7 @@ If a merchant does not have multiple vendors, the merchant has to create a singl
 
 The merchant account is the parent account used for settling all the funds associated to the merchant and its vendors.
 
+
 ### 2.3 Calling Conventions
 
 **Payment21® follows best practice coding conventions.**
@@ -174,11 +170,13 @@ Following common REST conventions, the API uses JSON (JavaScript Object Notation
 
 If the request can be fulfilled by Payment21®, the HTTP status code 200 will be returned, along with an optional response object containing further details.
 
-If the request is malformed, contains wrong or missing data, or we cannot process the request for any other reason, a HTTP status code different to 200 will be returned, e.g. 404 if the requested entity doesn’t exist.
+If the request is malformed, contains wrong or missing data, or we cannot process the request for any other reason, a HTTP status code different to 200 will be returned, e.g. 404 if the requested entity does not exist.
+
 
 ### 2.4 Supported HTTP Verbs
 
 <!-- include(supported_http_verbs.html) -->
+
 
 ### 2.5 Authentication and Authorization
 
@@ -190,6 +188,7 @@ Please be aware that your API key provides access to the Payment21® system in y
 
 If your API key is lost or compromised, Payment21® can create a new one for you. For security reasons, we cannot recover your previous API key.
 
+
 ## 3 Payment21® Cashier Page
 
 ### 3.1 Introduction
@@ -200,9 +199,10 @@ You first announce the payment to Payment21® via the P21PayByCrypto API endpoin
 
 Once you have integrated our cashier page, your consumer can pay for goods and services purchased by using “crypto currency” (Bitcoin, XBT). The API will transfer consumer data to the Payment21®-system for processing.
 
-If a consumer profile already exists in your database (that is, the merchant’s database) you can prefill fields such as consumer first name, last name, address and other contact information automatically. Other data fields related to the consumer’s payment are entered by the consumer and the payment is made by the consumer. We have additional security fields such as ID document, passport number and driver’s license number. The data entered will be stored in the Payment21® database for future resolution. 
+If a consumer profile already exists in your database (that is, the merchant’s database), you can prefill fields such as consumer first name, last name, address and other contact information automatically. The consumer enters other data fields related to the payment details and makes the payment. We have additional security fields such as ID document, passport number and driver’s license number. The data entered will be stored in the Payment21® database for future resolution.
 
 Payment21® will send an email to the consumer regarding his/her payment status. Additionally, the merchant receives a confirmation email containing the details of the transaction and purchase.
+
 
 ### 3.2 What the merchant’s consumers will see
 
@@ -216,7 +216,7 @@ As the first step, consumers have to explicitly agree with the Terms and Conditi
 
 ![name](images/payment_details.jpg)
 
-After confirming, the consumer is shown a QR-Code along with their payment details. 
+After confirming, the consumer is shown a QR-Code along with their payment details.
 
 ![name](images/payment_process.jpg)
 
@@ -230,11 +230,12 @@ The consumer of the crypto transaction gets an email receipt mentioning purchasi
 
 You as a merchant also get a notification email. This email message has the consumer’s transaction information such as amount and the transaction status of "Approved" on it.
 
+
 ### 3.3 How to integrate
 
 **The integration of the Payment21® cashier page is easy, and consists only of a few steps.**
 
-The payment process is as follows: 
+The payment process is as follows:
 
 1. The purchaser selects Payment21® for checkout
 2. Your application calls the API method “P21PayByCrypto”
@@ -243,13 +244,14 @@ The payment process is as follows:
 5. After the payment is received, the purchaser is redirected back to your site
 6. Call the API method PaymentStatus to check if the payment was successful
 
+
 **Step 1: The purchaser selects Payment21® for checkout**  
 To enable purchasers to pay with Payment21, you have to add an option in your application.
 
 **Step 2: Your application calls the API method “P21PayByCrypto”**  
 Your application calls the API method P21PayByCrypto to initialize the payment. This call includes details such as the amount, vendor and purchaser details.
 
-Note: If you haven’t already created a vendor, you will need to create one using the API method CreateVendor.
+Note: If you have not already created a vendor, you will need to create one using the API method CreateVendor.
 
 The P21PayByCrypto response contains a unique transaction-ID, which should be stored. You can use it to retrieve the status of the payment.
 
@@ -262,7 +264,7 @@ You should now redirect the purchaser to the URL of the Payment21® Cashier Page
 As shown in the previous section, the purchaser can see the currency amount, fair value rate and the resulting Bitcoin amount. He can use a local Bitcoin wallet or a QR-Code to send the requested amount to Payment21®.
 
 **Step 5: After the payment is received, the purchaser is redirected back to your site**  
-We are continuously monitoring the Bitcoin blockchain to instantly detect the Bitcoin transaction sent by the purchaser. After the requested amount is received, we will redirect the purchaser from our cashier page back to your site. The URL will also include the Transaction-ID returned in step two. 
+We are continuously monitoring the Bitcoin blockchain to detect the Bitcoin transaction sent by the purchaser instantly. After the requested amount is received, we will redirect the purchaser from our cashier page back to your site. The URL will also include the Transaction-ID returned in step two.
 
 **Step 6: Call the API method PaymentStatus to check if the payment was successful**  
 You can call the API method PaymentStatus to check if the payment was successful and show a confirmation page to the purchaser.
@@ -272,9 +274,11 @@ Note: You can query the PaymentStatus at any time. We recommend checking the sta
 
 ## 4 Sandbox API Connectivity Test
 
+### 4.1 Merchant Back Office
+
 **During the signup process, you need to test the API connectivity through the sandbox test application in your merchant account back office. This enables you to test your API implementation in an early stage of your onboarding process with Payment21.com.**
 
-To start the sandbox test, login with the credentials you used for the 5 step sign-up and navigate to the Sandbox Test:
+To start the sandbox test, login with your merchant account credentials and navigate to the Sandbox Test:
 
 ![name](images/sandbox_test.png)
 
@@ -282,25 +286,25 @@ After clicking on “Generate Merchant API Key”, you will see your merchant ID
 
 ![name](images/api_key.png)
 
-Using these credentials, you can call the method P21PayByCrypto using a different URL than in production:
+Using these credentials, you can call the method P21PayByCrypto using a different URL than in production: 
 
-/api/mapi/sandbox/p21PayByCrypto (instead of /api/mapi/p21PayByCrypto).
+/api/mapi/sandbox/p21PayByCrypto (instead of /api/mapi/p21PayByCrypto)
 
-For simplicity, some checks are omitted in the sandbox. For example, you can specify any vendor ID if you haven’t created a vendor yet. The success and error responses returned by the sandbox are identical to the live system.
+For simplicity, some checks are omitted in the sandbox. For example, you can specify any vendor ID if you have not created a vendor yet. The success and error responses returned by the sandbox are identical to the live system.
 
 Before you start implementing and calling the sandbox service, you need to enter a redirect URL, which should be part of your website. After the purchaser has completed the payment, he/she is redirected to this URL. You can include the value “{transactionId}”, which is automatically replaced with the ID of the completed transaction. This enables you to identify the payment when the purchaser is redirected from the cashier page back to your site.
 
 After you successfully called the sandbox API method, you can continue with the Payment21® merchant onboarding process.
 
-### 4.1 Bitcoin Testnet
+### 4.2 Bitcoin Testnet (Customization upon request)
 
 **If you want to test our Bitcoin Cashier System with the Bitcoin Testnet, you need to set up your Test Wallet first.**
 
-The Bitcoin testnet is an alternative Bitcoin block chain, to be used for testing. Testnet coins are separate and distinct from actual Bitcoins, and are never supposed to have any value. This allows application developers or Bitcoin testers to experiment, without having to use real Bitcoins.
+The Bitcoin Testnet is an alternative Bitcoin block chain, to be used for testing. Testnet coins are separate and distinct from actual Bitcoins, and are never supposed to have any value. This allows application developers or Bitcoin testers to experiment, without having to use real Bitcoins.
 
 https://en.bitcoin.it/wiki/Testnet
 
-If you want to test the Payment21® Bitcoin Cashier System with real Bitcoins, you need to set up your Bitcoin Wallet and purchase Bitcoin first. 
+If you want to test the Payment21® Bitcoin Cashier System with real Bitcoins, you need to set up your Bitcoin Wallet and purchase Bitcoin first.
 
 https://bitcoin.org/en/getting-started
 
@@ -318,6 +322,7 @@ The JSON/REST API will return HTTP Status Code 200 if the request was processed 
  OK          | 200         | Request was successful
  BAD_REQUEST | 400 | General error, e.g. the request contained invalid data
  LOW_PAYMENT_AMOUNT | 400 | The requested payment amount is too low
+ HTTP_REQUEST_METHOD_NOT_SUPPORTED | 400 | The requested HTTP verb is not supported
  WRONG_USERNAME_OR_PASSWORD | 401 | The supplied credentials are incorrect or don’t match
  MERCHANT_DISABLED | 403 | The merchant account is disabled
  MERCHANT_NOT_APPROVED | 403 | The merchant is currently not approved
@@ -344,16 +349,64 @@ Content-Length: 28
   "error":"ENTITY_NOT_FOUND"
 }
 ```
+
+**Payment21® Crypto (CreateVendor) Validation Error Response Example 1:**
+```
+HTTP/1.1 400 Bad Request
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: DENY
+Content-Type: application/json;charset=UTF-8
+
+{
+  "error": "BAD_REQUEST",
+  "fieldErrors": [
+    {
+      "field": "email",
+      "message": "may not be null"
+    },
+    {
+      "field": "company",
+      "message": "may not be null"
+    }
+  ]
+}
+```
+
+**Payment21® Crypto (CreateVendor) Validation Error Response Example 2:**
+```
+HTTP/1.1 400 Bad Request
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: DENY
+Content-Type: application/json;charset=UTF-8
+
+{
+  "error": "BAD_REQUEST",
+  "fieldErrors": [
+    {
+      "field": "company",
+      "message": "size must be between 1 and 50"
+    },
+    {
+      "field": "products",
+      "message": "size must be between 0 and 50"
+    },
+  ]
+}
+```
+
 # Group API Reference
 
 ## CreateVendor [POST /api/mapi/createVendor]
 
-This request provides all required information in order to assign a new vendor to a particular merchant. This will allow to send payments for a particular vendor and track transactions separately. As a response – you will receive a newly generated vendor-ID, which has to be stored and used in other interface requests.			
+This request provides all required information in order to assign a new vendor to a particular merchant. This will allow sending payments for a particular vendor and tracking transactions separately. As a response – you will receive a newly generated vendor-ID, which has to be stored and used in other interface requests.
 	
 + Request (application/json;charset=UTF-8)
 
     + Headers
 
+			apiKey: apiKeyDEMO
 			Accept: application/json, application/*+json
 			Cache-Control: no-cache
 			Pragma: no-cache
@@ -365,323 +418,323 @@ This request provides all required information in order to assign a new vendor t
 
     + Body
 
-			{ 
-			  "merchantId": "-1",
-			  "apiKey": "demoshopMerchantApiKey",
-			  "email": "info@abccompany.com", 
-			  "company": "abc company",
-			  "url": "http://www.abccompany.com",
-			  "monthlyTnxNum": "500",
-			  "avgTnxSize": "20",
-			  "refunds": "5",
-			  "chargebacks": "2",
-			  "affilliate": "affilliateName",
-			  "ownershipType": "SoleProprietor",
-			  "dba": "Slingshot",
-			  "billingAddress": "123 90th Street",
-			  "billingPostalCode": "11209", 
-			  "billingCity": "Brooklyn",
-			  "billingState": "N.Y.",
-			  "billingCountry": "USA", 
-			  "mailingAddress": "123 90th Street",
-			  "mailingPostalCode": "11209", 
-			  "mailingCity": "Brooklyn",
-			  "mailingState": "N.Y.",
-			  "mailingCountry": "USA",
-			  "phone": "718 123 4567",
-			  "fax": "718 123 4568",
-			  "taxIdNumber": "123456578",
-			  "branch": "Bay Ridge",
-			  "mcc": "1234",
-			  "products": "personal hygiene products",
-			  "license": "5678890", 
-			  "licenseGeolocation": "USA",
-			  "webUrl": "http://www.abccompany.com/admin",
-			  "contractingParty": "contracting party name",
-			  "signingPerson": "Boss X",
-			  "technicalContact": "Technician Y",
-			  "technicalEmail": "support@abccompany.com",
-			  "technicalPhone": "718 098 7654",
-			  "ipAddress": "0.0.0.0", 
-			  "billingDescriptor": "billingDescriptor",
-			  "beneficiaryName": "John Doe Beneficiary", 
-			  "beneficiaryDOB": "1981-01-11",
-			  "beneficiaryEquityOwnership": "0.65",
-			  "beneficiaryAddress": "765 59th Street",
-			  "beneficiaryCity": "Brooklyn",
-			  "beneficiaryState": "N.Y.",
-			  "beneficiaryCountry": "USA",
-			  "beneficiaryPhone": "718 346 3622",
-			  "beneficiaryIdDoc": "9393373",
-			  "beneficiaryIdDocCountry": "USA",
-			  "beneficiaryCitizenship": "USA",
-			  "beneficiaryDrivingLicence": "81224345"
-			}	
+			{                                                                           
+				"merchantId":-1,
+				"email":"info@abccompany.com",
+				"company":"abc company",
+				"monthlyTnxNum":"500",
+				"avgTnxSize":"20",
+				"refunds":"5",
+				"chargebacks":"2",
+				"affilliate":"affilliateName",
+				"ownershipType":"SoleProprietor",
+				"dba":"Slingshot",
+				"billingAddress":"123 90th Street",
+				"billingPostalCode":"11209",
+				"billingCity":"Brooklyn",
+				"billingState":"N.Y.",
+				"billingCountry":"USA",
+				"mailingAddress":"123 90th Street",
+				"mailingPostalCode":"11209",
+				"mailingCity":"Brooklyn",
+				"mailingState":"N.Y.",
+				"mailingCountry":"USA",
+				"phone":"718 123 4567",
+				"fax":"718 123 4568",
+				"taxIdNumber":"123456578",
+				"branch":"Bay Ridge",
+				"mcc":1234,
+				"products":"personal hygiene products",
+				"license":"5678890",
+				"licenseGeolocation":"USA",
+				"webUrl":"http://www.abccompany.com/admin",
+				"contractingParty":"contracting party name",
+				"signingPerson":"Boss X",
+				"technicalContact":"Technician Y",
+				"technicalEmail":"support@abccompany.com",
+				"technicalPhone":"718 098 7654",
+				"ecommerceUrl":"http://www.abccompany.com",
+				"ipAddress":"0.0.0.0",
+				"billingDescriptor":"billingDescriptor",
+				"beneficiaryName":"John Doe Beneficiary",
+				"beneficiaryDOB":"1981-01-11",
+				"beneficiaryEquityOwnership":"0.65",
+				"beneficiaryAddress":"765 59th Street",
+				"beneficiaryCity":"Brooklyn",
+				"beneficiaryState":"N.Y.",
+				"beneficiaryCountry":"USA",
+				"beneficiaryPhone":"718 346 3622",
+				"beneficiaryIdDoc":"9393373",
+				"beneficiaryIdDocCountry":"USA",
+				"beneficiaryCitizenship":"USA",
+				"beneficiaryDrivingLicence":"81224345"
+			}
 
 	+ Schema
 
 			{
-			  "$schema": "http://json-schema.org/draft-04/schema#",
-			  "type": "object",
-			  "properties": {
-				"merchantId": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Merchant User ID as assigned by Payment21.com"
+			  "title" : "CreateVendorRequest",
+			  "description" : "Input parameters for the operation CreateVendor",
+			  "type" : "object",
+			  "$schema" : "http://json-schema.org/draft-04/schema#",
+			  "properties" : {
+				"merchantId" : {
+				  "type" : "integer",
+				  "description" : "Merchant User ID as assigned by Payment21.com"
 				},
-				"apiKey": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Merchant API Key as assigned by Payment21.com"
+				"apiKey" : {
+				  "type" : "string",
+				  "description" : "Merchant API Key as assigned by Payment21.com",
+				  "maxLength" : 50,
+				  "in": "header|body"
 				},
-				"monthlyTnxNum": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Potential number of monthly transactions"
+				"email" : {
+				  "type" : "string",
+				  "description" : "Vendor email",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"avgTnxSize": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Average transaction size"
+				"company" : {
+				  "type" : "string",
+				  "description" : "Vendor company name",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"refunds": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Refunds per month"
+				"monthlyTnxNum" : {
+				  "type" : "string",
+				  "description" : "Potential number of monthly transactions",
+				  "maxLength" : 50
 				},
-				"chargebacks": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Chargebacks per month"
+				"avgTnxSize" : {
+				  "type" : "string",
+				  "description" : "Average transaction size",
+				  "maxLength" : 50
 				},
-				"email": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Vendor email"
+				"refunds" : {
+				  "type" : "string",
+				  "description" : "Refunds per month",
+				  "maxLength" : 50
 				},
-				"affiliate": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor affiliate name"
+				"chargebacks" : {
+				  "type" : "string",
+				  "description" : "Chargebacks per month",
+				  "maxLength" : 50
 				},
-				"company": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Vendor company name"
+				"affilliate" : {
+				  "type" : "string",
+				  "description" : "Vendor affiliate name",
+				  "maxLength" : 50
 				},
-				"ownershipType": {
-				  "type": "string",
-				  "enum": ["SoleProprietor", "Corporate"],
-				  "description": "Ownership type: SoleProprietor, Corporate"
+				"ownershipType" : {
+				  "type" : "string",
+				  "enum": [
+					"SoleProprietor",
+					"Corporate"
+				  ],
+				  "description" : "Ownership type: SoleProprietor, Corporate"
 				},
-				"dba": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor trade name"
+				"dba" : {
+				  "type" : "string",
+				  "description" : "Vendor trade name",
+				  "maxLength" : 50
 				},
-				"billingAddress": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Registration address"
+				"billingAddress" : {
+				  "type" : "string",
+				  "description" : "Registration addres",
+				  "maxLength" : 50
 				},
-				"billingPostalCode": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Registration postal code"
+				"billingPostalCode" : {
+				  "type" : "string",
+				  "description" : "Registration postal code",
+				  "maxLength" : 50
 				},
-				"billingCity": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Registration city"
+				"billingCity" : {
+				  "type" : "string",
+				  "description" : "Registration city",
+				  "maxLength" : 50
 				},
-				"billingState": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Registration state"
+				"billingState" : {
+				  "type" : "string",
+				  "description" : "Registration state",
+				  "maxLength" : 50
 				},
-				"billingCountry": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Country of registration, ISO 3166"
+				"billingCountry" : {
+				  "type" : "string",
+				  "description" : "Country of registration, ISO 3166",
+				  "maxLength" : 50
 				},
-				"mailingAddress": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Physical location address"
+				"mailingAddress" : {
+				  "type" : "string",
+				  "description" : "Physical location address",
+				  "maxLength" : 50
 				},
-				"mailingPostalCode": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Physical location postal code"
+				"mailingPostalCode" : {
+				  "type" : "string",
+				  "description" : "Physical location postal code",
+				  "maxLength" : 50
 				},
-				"mailingCity": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Physical location city"
+				"mailingCity" : {
+				  "type" : "string",
+				  "description" : "Physical location city",
+				  "maxLength" : 50
 				},
-				"mailingState": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Physical location state"
+				"mailingState" : {
+				  "type" : "string",
+				  "description" : "Physical location state",
+				  "maxLength" : 50
 				},
-				"mailingCountry": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Country of physical location, ISO 3166"
+				"mailingCountry" : {
+				  "type" : "string",
+				  "description" : "Country of physical location, ISO 3166",
+				  "maxLength" : 50
 				},
-				"phone": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor phone"
+				"phone" : {
+				  "type" : "string",
+				  "description" : "Vendor phon",
+				  "maxLength" : 50
 				},
-				"fax": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor fax"
+				"fax" : {
+				  "type" : "string",
+				  "description" : "Vendor fax",
+				  "maxLength" : 50
 				},
-				"taxIDNumber": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor tax number"
+				"taxIdNumber" : {
+				  "type" : "string",
+				  "description" : "Vendor tax number",
+				  "maxLength" : 50
 				},
-				"branch": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor branch of operation"
+				"branch" : {
+				  "type" : "string",
+				  "description" : "Vendor branch of operation",
+				  "maxLength" : 50
 				},
-				"mcc": {
-				  "type": "string",
-				  "maxLength": 4,
-				  "description": "Vendor category code (ISO 18245)"
+				"mcc" : {
+				  "type" : "integer",
+				  "description" : "Vendor category code (ISO 18245)"
 				},
-				"products": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor products description"
+				"products" : {
+				  "type" : "string",
+				  "description" : "Vendor products description",
+				  "maxLength" : 50
 				},
-				"license": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "License ID of the vendor required in case MCC is within specific values"
+				"license" : {
+				  "type" : "string",
+				  "description" : "License ID of the vendor required in case MCC is within specific values",
+				  "maxLength" : 50
 				},
-				"licenseGeolocation": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Country of license applicability, ISO 3166"
+				"licenseGeolocation" : {
+				  "type" : "string",
+				  "description" : "Country of license applicability, ISO 3166",
+				  "maxLength" : 50
 				},
-				"webUrl": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor website URL"
+				"webUrl" : {
+				  "type" : "string",
+				  "description" : "Vendor website UR",
+				  "maxLength" : 50
 				},
-				"contractingParty": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor contracting party name"
+				"contractingParty" : {
+				  "type" : "string",
+				  "description" : "Vendor contracting party name",
+				  "maxLength" : 50
 				},
-				"signingPerson": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Signing person"
+				"signingPerson" : {
+				  "type" : "string",
+				  "description" : "Signing person",
+				  "maxLength" : 50
 				},
-				"technicalContact": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Technical contact"
+				"technicalContact" : {
+				  "type" : "string",
+				  "description" : "Technical contact",
+				  "maxLength" : 50
 				},
-				"technicalEmail": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Email of technical contact"
+				"technicalEmail" : {
+				  "type" : "string",
+				  "description" : "Email of technical contact",
+				  "maxLength" : 50
 				},
-				"techPhone": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Phone number of technical contact"
+				"technicalPhone" : {
+				  "type" : "string",
+				  "description" : "Phone number of technical contact",
+				  "maxLength" : 50
 				},
-				"ecommerceUrl": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "URL of the shop where consumers are purchasing goods and services"
+				"ecommerceUrl" : {
+				  "type" : "string",
+				  "description" : "URL of the shop where consumers are purchasing goods and services",
+				  "maxLength" : 50
 				},
-				"ipAddress": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor IP address"
+				"ipAddress" : {
+				  "type" : "string",
+				  "description" : "Vendor IP address",
+				  "maxLength" : 50
 				},
-				"billingDescriptor": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Billing descriptor to be used in the transactions description as vendor billing descriptor"
+				"billingDescriptor" : {
+				  "type" : "string",
+				  "description" : "Billing descriptor to be used in the transactions description as vendor billing descriptor",
+				  "maxLength" : 50
 				},
-				"beneficiaryName": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Name of primary beneficial owner of contracting party"
+				"beneficiaryName" : {
+				  "type" : "string",
+				  "description" : "Name of primary beneficial owner of contracting party",
+				  "maxLength" : 50
 				},
-				"beneficiaryDOB": {
-				  "type": "string",
-				  "format": "date",
-				  "description": "Vendor beneficiary date of birth"
+				"beneficiaryDOB" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary date of birth",
+				  "format" : "date"
 				},
-				"beneficiaryEquityOwnership": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary equity ownership, in percent"
+				"beneficiaryEquityOwnership" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary equity ownership, in percent",
+				  "maxLength" : 50
 				},
-				"beneficiaryAddress": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary address"
+				"beneficiaryAddress" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary address",
+				  "maxLength" : 50
 				},
-				"beneficiaryCity": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary city"
+				"beneficiaryCity" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary city",
+				  "maxLength" : 50
 				},
-				"beneficiaryState": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary state"
+				"beneficiaryState" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary state",
+				  "maxLength" : 50
 				},
-				"beneficiaryCountry": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary country, ISO 3166"
+				"beneficiaryCountry" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary country, ISO 3166",
+				  "maxLength" : 50
 				},
-				"beneficiaryPhone": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary phone number"
+				"beneficiaryPhone" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary phone number",
+				  "maxLength" : 50
 				},
-				"beneficiaryIdDoc": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary ID document"
+				"beneficiaryIdDoc" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary ID document",
+				  "maxLength" : 50
 				},
-				"beneficiaryIdDocCountry": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary ID document issue country, ISO 3166"
+				"beneficiaryIdDocCountry" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary ID document issue country, ISO 3166",
+				  "maxLength" : 50
 				},
-				"beneficiaryCitizenship": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary citizenship, ISO 3166"
+				"beneficiaryCitizenship" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary citizenship, ISO 3166",
+				  "maxLength" : 50
 				},
-				"beneficiaryDrivingLicence": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary driving license"
+				"beneficiaryDrivingLicence" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary driving license",
+				  "maxLength" : 50
 				}
 			  },
 			  "required": [
 				"merchantId",
-				"apiKey",
 				"email",
 				"company"
 			  ]
@@ -702,7 +755,7 @@ This request provides all required information in order to assign a new vendor t
     + Body
 
 			{
-			  "vendorID":"59"
+			  "vendorId":"59"
 			}
 
 	+ Schema
@@ -711,572 +764,207 @@ This request provides all required information in order to assign a new vendor t
 			  "$schema": "http://json-schema.org/draft-04/schema#",
 			  "type": "object",
 			  "properties": {
-				"vendorID": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,	  
-				  "description": "Vendor ID assigned by Payment21.com"
-				}
-			  },
-			  "required": [
-				"vendorID"
-			  ]
-			}
-
-## UpdateVendor [POST /api/mapi/updateVendor]			
-
-This request updates all required information of a vendor associated to the given merchant. To identify the vendor, the ID returned from the CreateVendor API call has to be supplied.
-			
-+ Request (application/json;charset=UTF-8)
-
-    + Headers
-
-            Accept: application/json, application/*+json
-			Cache-Control: no-cache
-			Pragma: no-cache
-			User-Agent: Java/1.8.0_25 
-			Host: app.payment21.com
-			Connection: close
-			Content-Length: 1686
-
-    + Body
-
-			{ 
-			  "id": "59",
-			  "merchantId": "-1",
-			  "apiKey": "demoshopMerchantApiKey",
-			  "email": "info@abccompany.com", 
-			  "company": "abc company",
-			  "url": "http://www.abccompany.com",
-			  "monthlyTnxNum": "500",
-			  "avgTnxSize": "20",
-			  "refunds": "5",
-			  "chargebacks": "2",
-			  "affilliate": "affilliateName",
-			  "ownershipType": "SolePropriator",
-			  "dba": "Slingshot",
-			  "billingAddress": "123 90th Street",
-			  "billingPostalCode": "11209", 
-			  "billingCity": "Brooklyn",
-			  "billingState": "N.Y.",
-			  "billingCountry": "USA", 
-			  "mailingAddress": "123 90th Street",
-			  "mailingPostalCode": "11209", 
-			  "mailingCity": "Brooklyn",
-			  "mailingState": "N.Y.",
-			  "mailingCountry": "USA",
-			  "phone": "718 123 4567",
-			  "fax": "718 123 4568",
-			  "taxIdNumber": "123456578",
-			  "branch": "Bay Ridge",
-			  "mcc": "1234",
-			  "products": "personal hygiene products",
-			  "license": "5678890", 
-			  "licenseGeolocation": "USA",
-			  "webUrl": "http://www.abccompany.com/admin",
-			  "contractingParty": "contracting party name",
-			  "signingPerson": "Boss X",
-			  "technicalContact": "Technician Y",
-			  "technicalEmail": "support@abccompany.com",
-			  "technicalPhone": "718 098 7654",
-			  "ipAddress": "0.0.0.0", 
-			  "billingDescriptor": "billingDescriptor",
-			  "beneficiaryName": "John Doe Beneficiary", 
-			  "beneficiaryDOB": "1981-01-11",
-			  "beneficiaryEquityOwnership": "0.65",
-			  "beneficiaryAddress": "765 59th Street",
-			  "beneficiaryCity": "Brooklyn",
-			  "beneficiaryState": "N.Y.",
-			  "beneficiaryCountry": "USA",
-			  "beneficiaryPhone": "718 346 3622",
-			  "beneficiaryIdDoc": "9393373",
-			  "beneficiaryIdDocCountry": "USA",
-			  "beneficiaryCitizenship": "USA",
-			  "beneficiaryDrivingLicence": "81224345"
-			}
-
-	+ Schema
-
-			{
-			  "$schema": "http://json-schema.org/draft-04/schema#",
-			  "type": "object",
-			  "properties": {
-				"id": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "The ID of the vendor to update as returned by CreateVendor"
-				},  
-				"merchantId": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Merchant User ID as assigned by Payment21.com"
-				},
-				"apiKey": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Merchant API Key as assigned by Payment21.com"
-				},
-				"monthlyTnxNum": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Potential number of monthly transactions"
-				},
-				"avgTnxSize": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Average transaction size"
-				},
-				"refunds": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Refunds per month"
-				},
-				"chargebacks": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Chargebacks per month"
-				},
-				"email": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Vendor email"
-				},
-				"affiliate": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor affiliate name"
-				},
-				"company": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Vendor company name"
-				},
-				"ownershipType": {
-				  "type": "string",
-				  "enum": ["SoleProprietor", "Corporate"],
-				  "description": "Ownership type: SoleProprietor, Corporate"
-				},
-				"dba": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor trade name"
-				},
-				"billingAddress": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Registration address"
-				},
-				"billingPostalCode": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Registration postal code"
-				},
-				"billingCity": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Registration city"
-				},
-				"billingState": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Registration state"
-				},
-				"billingCountry": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Country of registration, ISO 3166"
-				},
-				"mailingAddress": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Physical location address"
-				},
-				"mailingPostalCode": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Physical location postal code"
-				},
-				"mailingCity": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Physical location city"
-				},
-				"mailingState": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Physical location state"
-				},
-				"mailingCountry": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Country of physical location, ISO 3166"
-				},
-				"phone": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor phone"
-				},
-				"fax": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor fax"
-				},
-				"taxIDNumber": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor tax number"
-				},
-				"branch": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor branch of operation"
-				},
-				"mcc": {
-				  "type": "string",
-				  "maxLength": 4,
-				  "description": "Vendor category code (ISO 18245)"
-				},
-				"products": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor products description"
-				},
-				"license": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "License ID of the vendor required in case MCC is within specific values"
-				},
-				"licenseGeolocation": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Country of license applicability, ISO 3166"
-				},
-				"webUrl": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor website URL"
-				},
-				"contractingParty": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor contracting party name"
-				},
-				"signingPerson": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Signing person"
-				},
-				"technicalContact": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Technical contact"
-				},
-				"technicalEmail": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Email of technical contact"
-				},
-				"techPhone": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Phone number of technical contact"
-				},
-				"ecommerceUrl": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "URL of the shop where consumers are purchasing goods and services"
-				},
-				"ipAddress": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor IP address"
-				},
-				"billingDescriptor": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Billing descriptor to be used in the transactions description as vendor billing descriptor"
-				},
-				"beneficiaryName": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Name of primary beneficial owner of contracting party"
-				},
-				"beneficiaryDOB": {
-				  "type": "string",
-				  "format": "date",
-				  "description": "Vendor beneficiary date of birth"
-				},
-				"beneficiaryEquityOwnership": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary equity ownership, in percent"
-				},
-				"beneficiaryAddress": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary address"
-				},
-				"beneficiaryCity": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary city"
-				},
-				"beneficiaryState": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary state"
-				},
-				"beneficiaryCountry": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary country, ISO 3166"
-				},
-				"beneficiaryPhone": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary phone number"
-				},
-				"beneficiaryIdDoc": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary ID document"
-				},
-				"beneficiaryIdDocCountry": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary ID document issue country, ISO 3166"
-				},
-				"beneficiaryCitizenship": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary citizenship, ISO 3166"
-				},
-				"beneficiaryDrivingLicence": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Vendor beneficiary driving license"
-				}
-			  },
-			  "required": [
-				"id",
-				"merchantId",
-				"apiKey",
-				"email",
-				"company"
-			  ]
-			}
-
-+ Response 200 (application/json;charset=UTF-8)
-
-	This method doesn’t return any information if successfully called. Please see the API error section for further details.
-
-    + Headers
-
-			Server: Apache-Coyote/1.1
-			X-Content-Type-Options: nosniff
-			X-XSS-Protection: 1; mode=block
-			X-Frame-Options: DENY
-			Date: Wed, 13 Jan 2016 22:17:35 GMT
-			Connection: close
-			Content-Length: 0
-
-
-## P21PayByCrypto [POST /api/mapi/p21PayByCrypto]
-
-Input Parameters (An object of “Payment21® Crypto Payment (P21PayByCrypto)” with the following member variables):
-
-+ Request (application/json;charset=UTF-8)
-
-    + Headers
-
-			Accept: application/json, application/*+json
-			Cache-Control: no-cache
-			Pragma: no-cache
-			User-Agent: Java/1.8.0_25 
-			Host: app.payment21.com
-			Connection: close
-			Content-Length: 539
-
-
-    + Body
-
-			{
-				"merchantId" : "-1",
-				"vendorId" : "-1",
-				"apiKey" : "61d3fe9e-1610-4574-8977-40e500962e67",
-				"orderAmount" : 20,
-				"orderCurrency" : "USD",
-				"itemDescription" : "Milk",
-				"itemCode" : "a17",
-				"partnerTransId" : "pt8274",
-				"merchantConsumerId" : "-2",
-				"merchantTransId" : "mt32789",
-				"firstName" : "John",
-				"lastName" : "Smith",
-				"dateOfBirth" : "1970-12-27",
-				"docId" : "D234890",
-				"phone" : "+1123456789",
-				"email" : "john@abccompanyChange.com",
-				"address1" : "123 First Street",
-				"address2" : "",
-				"driverLicenseNumber" : "ddr-1234",
-				"passportNumber" : "GW34576",
-				"city" : "New York",
-				"state" : "NY",
-				"postalCode" : "12345",
-				"country" : "US",
-				"deliveryLevel" : 3
-			}
-
-	+ Schema
-
-			{
-			  "$schema": "http://json-schema.org/draft-04/schema#",
-			  "type": "object",
-			  "properties": {
-				"merchantId": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Merchant User ID as assigned by Payment21.com"
-				},
-				"apiKey": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Merchant API Key as assigned by Payment21.com"
-				},
 				"vendorId": {
 				  "type": "string",
 				  "minLength": 1,
 				  "maxLength": 50,
-				  "description": "Vendor ID as assigned by Payment21.com"
+				  "description": "Vendor ID assigned by Payment21.com"
+				}
+			  },
+			  "required": [
+				"vendorId"
+			  ]
+			}
+
+			
+## P21PayByCrypto [POST /api/mapi/p21PayByCrypto]
+
++ Request (application/json;charset=UTF-8)
+
+	Input Parameters (An object of “Payment21® Crypto Payment (P21PayByCrypto)” with the following member variables):
+	
+    + Headers
+
+			apiKey: apiKeyDEMO
+			Accept: application/json, application/*+json
+			Cache-Control: no-cache
+			Pragma: no-cache
+			User-Agent: Java/1.8.0_25
+			Host: app.payment21.com
+			Connection: close
+			Content-Length: 539
+
+    + Body
+
+			{
+				"merchantId":-1,
+				"vendorId":59,
+				"orderAmount":20,
+				"orderCurrency":"USD",
+				"itemDescription":"Milk",
+				"itemCode":"a17",
+				"partnerTransId":"pt8274",
+				"merchantConsumerId":"-2",
+				"merchantTransId":"mt32789",
+				"firstName":"John",
+				"lastName":"Smith",
+				"dateOfBirth":"1970-12-27",
+				"docId":"D234890",
+				"phone":"+1123456789",
+				"email":"john@abccompanyChange.com",
+				"address1":"123 First Street",
+				"address2":"",
+				"driverLicenseNumber":"ddr-1234",
+				"passportNumber":"GW34576",
+				"city":"New York",
+				"state":"NY",
+				"postalCode":"12345",
+				"country":"US",
+				"deliveryLevel":3
+			}
+
+	+ Schema
+
+			{
+			  "title" : "P21PayByCryptoRequest",
+			  "description" : "Input parameters for the operation P21PayByCrypto",
+			  "type" : "object",
+			  "$schema" : "http://json-schema.org/draft-04/schema#",
+			  "properties" : {
+				"merchantId" : {
+				  "type" : "integer",
+				  "description" : "Merchant User ID as assigned by Payment21.com"
 				},
-				"orderAmount": {
-				  "type": "number",
-				  "description": "Order amount"
+				"vendorId" : {
+				  "type" : "integer",
+				  "description" : "Vendor ID as assigned by Payment21.com"
 				},
-				"orderCurrency": {
-				  "type": "string",
-				  "description": "Currency code, ISO 4217"
+				"apiKey" : {
+				  "type" : "string",
+				  "description" : "Merchant API Key as assigned by Payment21.com",
+				  "maxLength" : 50,
+				  "in": "header|body"
 				},
-				"itemDescription": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Item description"
+				"orderAmount" : {
+				  "type" : "number",
+				  "description" : "Order amount"
 				},
-				"itemCode": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Code of the item"
+				"orderCurrency" : {
+				  "type" : "string",
+				  "description" : "Currency code, ISO 4217"
 				},
-				"partnerTransID": {
-				  "type": "string",
-				  "maxLength": 36,
-				  "description": "Merchant partner transaction ID"
+				"itemDescription" : {
+				  "type" : "string",
+				  "description" : "Item description",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"merchantConsumerId": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 36,
-				  "description": "An ID which uniquely identifies the purchaser of the given vendor. Successive calls have to use the same id for the same purchaser."
+				"itemCode" : {
+				  "type" : "string",
+				  "description" : "Code of the item",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"merchantTransId": {
-				  "type": "string",
-				  "maxLength": 36,
-				 "description": "Merchant transaction ID"
+				"partnerTransId" : {
+				  "type" : "string",
+				  "description" : "Merchant partner transaction I",
+				  "maxLength" : 36
 				},
-				"firstName": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Consumer’s first name"
+				"merchantConsumerId" : {
+				  "type" : "string",
+				  "description" : "An ID which uniquely identifies the purchaser of the given vendor. Successive calls have to use the same id for the same purchaser.",
+				  "maxLength" : 36,
+				  "minLength" : 1
 				},
-				"lastName": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Consumer’s last name"
+				"merchantTransId" : {
+				  "type" : "string",
+				  "description" : "Merchant transaction ID",
+				  "maxLength" : 36
 				},
-				"dateOfBirth": {
-				  "type": "string",
-				  "format": "date",
-				  "description": "Consumer’s date of birth"
+				"firstName" : {
+				  "type" : "string",
+				  "description" : "Consumer's first name",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"docId": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Identification document number"
+				"lastName" : {
+				  "type" : "string",
+				  "description" : "Consumer's last name",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"phone": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Consumer’s phone"
+				"dateOfBirth" : {
+				  "type" : "string",
+				  "description" : "Consumer's date of birth",
+				  "format" : "date"
 				},
-				"email": {
-				  "type": "string",
-				  "description": "Consumer’s email address"
+				"docId" : {
+				  "type" : "string",
+				  "description" : "Identification document number",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"address1": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				 "description": "Consumer’s address field one"
+				"phone" : {
+				  "type" : "string",
+				  "description" : "Consumer's phone",
+				  "maxLength" : 50
 				},
-				"address2": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Consumer’s address field two"
+				"email" : {
+				  "type" : "string",
+				  "description" : "Consumer's email address",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"driverLicenseNumber": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Consumer’s driver license number"
+				"address1" : {
+				  "type" : "string",
+				  "description" : "Consumer's address field one",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"passportNumber": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Consumer’s passport number"
+				"address2" : {
+				  "type" : "string",
+				  "description" : "Consumer's address field two",
+				  "maxLength" : 50
 				},
-				"city": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Consumer’s address city"
+				"driverLicenseNumber" : {
+				  "type" : "string",
+				  "description" : "Consumer's driver license number",
+				  "maxLength" : 50
 				},
-				"state": {
-				  "type": "string",
-				  "maxLength": 50,
-				  "description": "Consumer’s address state code"
+				"passportNumber" : {
+				  "type" : "string",
+				  "description" : "Consumer's passport number",
+				  "maxLength" : 50
 				},
-				"postalCode": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 10,
-				  "description": "5 digit postal code in the consumer’s country (or ZIP)"
+				"city" : {
+				  "type" : "string",
+				  "description" : "Consumer's address city",
+				  "maxLength" : 50,
+				  "minLength" : 1
 				},
-				"country": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Consumer’s country, e.g. “United Kingdom”"
+				"state" : {
+				  "type" : "string",
+				  "description" : "Consumer's address state code",
+				  "maxLength" : 50
 				},
-				"deliveryLevel": {
-				  "type": "number",
-				  "description": "The number of confirmations in the Bitcoin blockchain to wait for until the status Ready for Delivery is reached. If set to 0, the status is reached as soon as the transaction was broadcast in the bitcoin network. See operation PaymentStatus for more details."
+				"postalCode" : {
+				  "type" : "string",
+				  "description" : "5 digit postal code in the consumer's country (or ZIP)",
+				  "maxLength" : 10,
+				  "minLength" : 1
+				},
+				"country" : {
+				  "type" : "string",
+				  "description" : "Consumer's country, e.g. 'United Kingdom'",
+				  "maxLength" : 50
+				},
+				"deliveryLevel" : {
+				  "type" : "integer",
+				  "description" : "The number of confirmations in the Bitcoin blockchain to wait for until the status Ready for Delivery is reached. If set to 0, the status is reached as soon as the transaction was broadcast in the bitcoin network. See operation PaymentStatus for more details."
 				}
 			  },
 			  "required": [
 				"merchantId",
-				"apiKey",
 				"vendorId",
 				"orderAmount",
 				"orderCurrency",
@@ -1342,65 +1030,63 @@ Input Parameters (An object of “Payment21® Crypto Payment (P21PayByCrypto)”
 			}
 
 
-## PaymentStatus [POST /api/mapi/paymentStatus]
+## PaymentStatus [GET /api/mapi/paymentStatus/{merchantId}/{transactionId}]
 
-**Return Response:**
++ Parameters
+	+ merchantId: `-1` (required, number)
+	+ transactionId: `4e1736f3-17bd-4477-9159-3bcfa8685bbd` (required, string)
 
-<!-- include(payment_status_table.html) -->
++ Request
 
-+ Request (application/json;charset=UTF-8)
+	+ Headers
 
-    + Headers
-
+			apiKey: demoShopApiKey
 			Accept: application/json, application/*+json
 			Cache-Control: no-cache
 			Pragma: no-cache
 			User-Agent: Java/1.8.0_25 
 			Host: app.payment21.com
 			Connection: close
-			Content-Length: 126
-
-    + Body
-
-			{ 
-			  "merchantId": "-1",
-			  "apiKey": "demoshopMerchantApiKey",
-			  "transactionId": "4e1736f3-17bd-4477-9159-3bcfa8685bbd"
-			}
 
 	+ Schema
 
 			{
+			  "description": "Path and header parameters",
 			  "$schema": "http://json-schema.org/draft-04/schema#",
-			  "type": "object",
-			  "properties": {
-				"merchantId": {
-				  "type": "string",
-				  "minLength": 1,
-				  "maxLength": 50,
-				  "description": "Merchant User ID as assigned by Payment21.com"
-				},
+			  "parameters": {
 				"apiKey": {
 				  "type": "string",
 				  "minLength": 1,
 				  "maxLength": 50,
-				  "description": "Merchant API Key as assigned by Payment21.com"
+				  "description": "Merchant API Key as assigned by Payment21.com",
+				  "in": "header"
+				},
+				"merchantId": {
+				  "type": "integer",
+				  "description": "Merchant User ID as assigned by Payment21.com",
+				  "in": "path"
 				},
 				"transactionId": {
 				  "type": "string",
 				  "minLength": 1,
 				  "maxLength": 50,
-				  "description": "The transaction ID for which to get the status"
+				  "description": "The transaction ID for which to get the status",
+				  "in": "path"
 				}
 			  },
 			  "required": [
-				"merchantId",
 				"apiKey",
+				"merchantId",
 				"transactionId"
 			  ]
 			}
 
+
 + Response 200 (application/json;charset=UTF-8)
+
+    **Return Response:**
+
+    <!-- include(payment_status_table.html) -->
 
     + Body
 
@@ -1430,3 +1116,682 @@ Input Parameters (An object of “Payment21® Crypto Payment (P21PayByCrypto)”
 				"status"
 			  ]
 			}
+
+## UpdateVendor [/api/mapi/updateVendor]
+
+### UpdateReplaceVendor [PUT]
+
+This request updates all required information of a vendor associated to the given merchant. To identify the vendor, the ID returned from the CreateVendor API call has to be supplied.
+			
++ Request (application/json;charset=UTF-8)
+
+    + Headers
+
+			apiKey: apiKeyDEMO
+			Accept: application/json, application/*+json
+			Cache-Control: no-cache
+			Pragma: no-cache
+			User-Agent: Java/1.8.0_25
+			Host: app.payment21.com
+			Connection: close
+			Content-Length: 1671
+
+    + Body
+
+			{
+				"id":59,
+				"merchantId":-1,
+				"email":"info@abccompany.com",
+				"company":"abc company",
+				"monthlyTnxNum":"500",
+				"avgTnxSize":"20",
+				"refunds":"5",
+				"chargebacks":"2",
+				"affilliate":"affilliateName",
+				"ownershipType":"SoleProprietor",
+				"dba":"Slingshot",
+				"billingAddress":"123 90th Street",
+				"billingPostalCode":"11209",
+				"billingCity":"Brooklyn",
+				"billingState":"N.Y.",
+				"billingCountry":"USA",
+				"mailingAddress":"123 90th Street",
+				"mailingPostalCode":"11209",
+				"mailingCity":"Brooklyn",
+				"mailingState":"N.Y.",
+				"mailingCountry":"USA",
+				"phone":"718 123 4567",
+				"fax":"718 123 4568",
+				"taxIdNumber":"123456578",
+				"branch":"Bay Ridge",
+				"mcc":1234,
+				"products":"personal hygiene products",
+				"license":"5678890",
+				"licenseGeolocation":"USA",
+				"webUrl":"http://www.abccompany.com/admin",
+				"contractingParty":"contracting party name",
+				"signingPerson":"Boss X",
+				"technicalContact":"Technician Y",
+				"technicalEmail":"support@abccompany.com",
+				"technicalPhone":"718 098 7654",
+				"ecommerceUrl":"http://www.abccompany.com",
+				"ipAddress":"0.0.0.0",
+				"billingDescriptor":"billingDescriptor",
+				"beneficiaryName":"John Doe Beneficiary",
+				"beneficiaryDOB":"1981-01-11",
+				"beneficiaryEquityOwnership":"0.65",
+				"beneficiaryAddress":"765 59th Street",
+				"beneficiaryCity":"Brooklyn",
+				"beneficiaryState":"N.Y.",
+				"beneficiaryCountry":"USA",
+				"beneficiaryPhone":"718 346 3622",
+				"beneficiaryIdDoc":"9393373",
+				"beneficiaryIdDocCountry":"USA",
+				"beneficiaryCitizenship":"USA",
+				"beneficiaryDrivingLicence":"81224345"
+			}
+
+	+ Schema
+
+			{
+			  "title" : "UpdateReplaceVendorRequest",
+			  "description" : "Input parameters for the operation UpdateReplaceVendor. Not specified optional properties will be set to null.",
+			  "type" : "object",
+			  "$schema" : "http://json-schema.org/draft-04/schema#",
+			  "properties" : {
+				"id" : {
+				  "type" : "integer",
+				  "description" : "The ID of the vendor to update as returned by CreateVendor"
+				},
+				"merchantId" : {
+				  "type" : "integer",
+				  "description" : "Merchant User ID as assigned by Payment21.com"
+				},
+				"apiKey" : {
+				  "type" : "string",
+				  "description" : "Merchant API Key as assigned by Payment21.com",
+				  "maxLength" : 50,
+				  "in": "header|body"
+				},
+				"email" : {
+				  "type" : "string",
+				  "description" : "Vendor email",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"company" : {
+				  "type" : "string",
+				  "description" : "Vendor company name",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"monthlyTnxNum" : {
+				  "type" : "string",
+				  "description" : "Potential number of monthly transactions",
+				  "maxLength" : 50
+				},
+				"avgTnxSize" : {
+				  "type" : "string",
+				  "description" : "Average transaction size",
+				  "maxLength" : 50
+				},
+				"refunds" : {
+				  "type" : "string",
+				  "description" : "Refunds per month",
+				  "maxLength" : 50
+				},
+				"chargebacks" : {
+				  "type" : "string",
+				  "description" : "Chargebacks per month",
+				  "maxLength" : 50
+				},
+				"affilliate" : {
+				  "type" : "string",
+				  "description" : "Vendor affiliate name",
+				  "maxLength" : 50
+				},
+				"ownershipType" : {
+				  "type" : "string",
+				  "enum": [
+					"SoleProprietor",
+					"Corporate"
+				  ],
+				  "description" : "Ownership type: SoleProprietor, Corporate"
+				},
+				"dba" : {
+				  "type" : "string",
+				  "description" : "Vendor trade name",
+				  "maxLength" : 50
+				},
+				"billingAddress" : {
+				  "type" : "string",
+				  "description" : "Registration addres",
+				  "maxLength" : 50
+				},
+				"billingPostalCode" : {
+				  "type" : "string",
+				  "description" : "Registration postal code",
+				  "maxLength" : 50
+				},
+				"billingCity" : {
+				  "type" : "string",
+				  "description" : "Registration city",
+				  "maxLength" : 50
+				},
+				"billingState" : {
+				  "type" : "string",
+				  "description" : "Registration state",
+				  "maxLength" : 50
+				},
+				"billingCountry" : {
+				  "type" : "string",
+				  "description" : "Country of registration, ISO 3166",
+				  "maxLength" : 50
+				},
+				"mailingAddress" : {
+				  "type" : "string",
+				  "description" : "Physical location address",
+				  "maxLength" : 50
+				},
+				"mailingPostalCode" : {
+				  "type" : "string",
+				  "description" : "Physical location postal code",
+				  "maxLength" : 50
+				},
+				"mailingCity" : {
+				  "type" : "string",
+				  "description" : "Physical location city",
+				  "maxLength" : 50
+				},
+				"mailingState" : {
+				  "type" : "string",
+				  "description" : "Physical location state",
+				  "maxLength" : 50
+				},
+				"mailingCountry" : {
+				  "type" : "string",
+				  "description" : "Country of physical location, ISO 3166",
+				  "maxLength" : 50
+				},
+				"phone" : {
+				  "type" : "string",
+				  "description" : "Vendor phon",
+				  "maxLength" : 50
+				},
+				"fax" : {
+				  "type" : "string",
+				  "description" : "Vendor fax",
+				  "maxLength" : 50
+				},
+				"taxIdNumber" : {
+				  "type" : "string",
+				  "description" : "Vendor tax number",
+				  "maxLength" : 50
+				},
+				"branch" : {
+				  "type" : "string",
+				  "description" : "Vendor branch of operation",
+				  "maxLength" : 50
+				},
+				"mcc" : {
+				  "type" : "integer",
+				  "description" : "Vendor category code (ISO 18245)"
+				},
+				"products" : {
+				  "type" : "string",
+				  "description" : "Vendor products description",
+				  "maxLength" : 50
+				},
+				"license" : {
+				  "type" : "string",
+				  "description" : "License ID of the vendor required in case MCC is within specific values",
+				  "maxLength" : 50
+				},
+				"licenseGeolocation" : {
+				  "type" : "string",
+				  "description" : "Country of license applicability, ISO 3166",
+				  "maxLength" : 50
+				},
+				"webUrl" : {
+				  "type" : "string",
+				  "description" : "Vendor website UR",
+				  "maxLength" : 50
+				},
+				"contractingParty" : {
+				  "type" : "string",
+				  "description" : "Vendor contracting party name",
+				  "maxLength" : 50
+				},
+				"signingPerson" : {
+				  "type" : "string",
+				  "description" : "Signing person",
+				  "maxLength" : 50
+				},
+				"technicalContact" : {
+				  "type" : "string",
+				  "description" : "Technical contact",
+				  "maxLength" : 50
+				},
+				"technicalEmail" : {
+				  "type" : "string",
+				  "description" : "Email of technical contact",
+				  "maxLength" : 50
+				},
+				"technicalPhone" : {
+				  "type" : "string",
+				  "description" : "Phone number of technical contact",
+				  "maxLength" : 50
+				},
+				"ecommerceUrl" : {
+				  "type" : "string",
+				  "description" : "URL of the shop where consumers are purchasing goods and services",
+				  "maxLength" : 50
+				},
+				"ipAddress" : {
+				  "type" : "string",
+				  "description" : "Vendor IP address",
+				  "maxLength" : 50
+				},
+				"billingDescriptor" : {
+				  "type" : "string",
+				  "description" : "Billing descriptor to be used in the transactions description as vendor billing descriptor",
+				  "maxLength" : 50
+				},
+				"beneficiaryName" : {
+				  "type" : "string",
+				  "description" : "Name of primary beneficial owner of contracting party",
+				  "maxLength" : 50
+				},
+				"beneficiaryDOB" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary date of birth",
+				  "format" : "date"
+				},
+				"beneficiaryEquityOwnership" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary equity ownership, in percent",
+				  "maxLength" : 50
+				},
+				"beneficiaryAddress" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary address",
+				  "maxLength" : 50
+				},
+				"beneficiaryCity" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary city",
+				  "maxLength" : 50
+				},
+				"beneficiaryState" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary state",
+				  "maxLength" : 50
+				},
+				"beneficiaryCountry" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary country, ISO 3166",
+				  "maxLength" : 50
+				},
+				"beneficiaryPhone" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary phone number",
+				  "maxLength" : 50
+				},
+				"beneficiaryIdDoc" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary ID document",
+				  "maxLength" : 50
+				},
+				"beneficiaryIdDocCountry" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary ID document issue country, ISO 3166",
+				  "maxLength" : 50
+				},
+				"beneficiaryCitizenship" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary citizenship, ISO 3166",
+				  "maxLength" : 50
+				},
+				"beneficiaryDrivingLicence" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary driving license",
+				  "maxLength" : 50
+				}
+			  },
+			  "required": [
+				"id",
+				"merchantId",
+				"email",
+				"company"
+			  ]
+			}
++ Response 200 (application/json;charset=UTF-8)
+
+	This method does not return any information if successfully called. Please see the API error section for further details.
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 22:17:35 GMT
+			Connection: close
+			Content-Length: 0
+
+### UpdateModifyVendor [PATCH]		
+
+This request updates all required information of a vendor associated to the given merchant. To identify the vendor, the ID returned from the CreateVendor API call has to be supplied.
+			
++ Request (application/json;charset=UTF-8)
+
+    + Headers
+
+			apiKey: apiKeyDEMO
+			Accept: application/json, application/*+json
+			Cache-Control: no-cache
+			Pragma: no-cache
+			User-Agent: Java/1.8.0_25
+			Host: app.payment21.com
+			Connection: close
+			Content-Length: 1671
+
+    + Body
+
+			{
+				"id":59,
+				"merchantId":-1,
+				"email":"info@abccompany.com",
+				"company":"abc company",
+				"ecommerceUrl":"http://www.abccompany.com",
+				"ipAddress":"0.0.0.0"
+			}
+
+	+ Schema
+
+			{
+			  "title" : "UpdateModifyVendorRequest",
+			  "description" : "Input parameters for the operation UpdateModifyVendor. Only specified properties will be updated.",
+			  "type" : "object",
+			  "$schema" : "http://json-schema.org/draft-04/schema#",
+			  "properties" : {
+				"id" : {
+				  "type" : "integer",
+				  "description" : "The ID of the vendor to update as returned by CreateVendor"
+				},
+				"merchantId" : {
+				  "type" : "integer",
+				  "description" : "Merchant User ID as assigned by Payment21.com"
+				},
+				"apiKey" : {
+				  "type" : "string",
+				  "description" : "Merchant API Key as assigned by Payment21.com",
+				  "maxLength" : 50,
+				  "in": "header|body"
+				},
+				"email" : {
+				  "type" : "string",
+				  "description" : "Vendor email",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"company" : {
+				  "type" : "string",
+				  "description" : "Vendor company name",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"monthlyTnxNum" : {
+				  "type" : "string",
+				  "description" : "Potential number of monthly transactions",
+				  "maxLength" : 50
+				},
+				"avgTnxSize" : {
+				  "type" : "string",
+				  "description" : "Average transaction size",
+				  "maxLength" : 50
+				},
+				"refunds" : {
+				  "type" : "string",
+				  "description" : "Refunds per month",
+				  "maxLength" : 50
+				},
+				"chargebacks" : {
+				  "type" : "string",
+				  "description" : "Chargebacks per month",
+				  "maxLength" : 50
+				},
+				"affilliate" : {
+				  "type" : "string",
+				  "description" : "Vendor affiliate name",
+				  "maxLength" : 50
+				},
+				"ownershipType" : {
+				  "type" : "string",
+				  "enum": [
+					"SoleProprietor",
+					"Corporate"
+				  ],
+				  "description" : "Ownership type: SoleProprietor, Corporate"
+				},
+				"dba" : {
+				  "type" : "string",
+				  "description" : "Vendor trade name",
+				  "maxLength" : 50
+				},
+				"billingAddress" : {
+				  "type" : "string",
+				  "description" : "Registration addres",
+				  "maxLength" : 50
+				},
+				"billingPostalCode" : {
+				  "type" : "string",
+				  "description" : "Registration postal code",
+				  "maxLength" : 50
+				},
+				"billingCity" : {
+				  "type" : "string",
+				  "description" : "Registration city",
+				  "maxLength" : 50
+				},
+				"billingState" : {
+				  "type" : "string",
+				  "description" : "Registration state",
+				  "maxLength" : 50
+				},
+				"billingCountry" : {
+				  "type" : "string",
+				  "description" : "Country of registration, ISO 3166",
+				  "maxLength" : 50
+				},
+				"mailingAddress" : {
+				  "type" : "string",
+				  "description" : "Physical location address",
+				  "maxLength" : 50
+				},
+				"mailingPostalCode" : {
+				  "type" : "string",
+				  "description" : "Physical location postal code",
+				  "maxLength" : 50
+				},
+				"mailingCity" : {
+				  "type" : "string",
+				  "description" : "Physical location city",
+				  "maxLength" : 50
+				},
+				"mailingState" : {
+				  "type" : "string",
+				  "description" : "Physical location state",
+				  "maxLength" : 50
+				},
+				"mailingCountry" : {
+				  "type" : "string",
+				  "description" : "Country of physical location, ISO 3166",
+				  "maxLength" : 50
+				},
+				"phone" : {
+				  "type" : "string",
+				  "description" : "Vendor phon",
+				  "maxLength" : 50
+				},
+				"fax" : {
+				  "type" : "string",
+				  "description" : "Vendor fax",
+				  "maxLength" : 50
+				},
+				"taxIdNumber" : {
+				  "type" : "string",
+				  "description" : "Vendor tax number",
+				  "maxLength" : 50
+				},
+				"branch" : {
+				  "type" : "string",
+				  "description" : "Vendor branch of operation",
+				  "maxLength" : 50
+				},
+				"mcc" : {
+				  "type" : "integer",
+				  "description" : "Vendor category code (ISO 18245)"
+				},
+				"products" : {
+				  "type" : "string",
+				  "description" : "Vendor products description",
+				  "maxLength" : 50
+				},
+				"license" : {
+				  "type" : "string",
+				  "description" : "License ID of the vendor required in case MCC is within specific values",
+				  "maxLength" : 50
+				},
+				"licenseGeolocation" : {
+				  "type" : "string",
+				  "description" : "Country of license applicability, ISO 3166",
+				  "maxLength" : 50
+				},
+				"webUrl" : {
+				  "type" : "string",
+				  "description" : "Vendor website UR",
+				  "maxLength" : 50
+				},
+				"contractingParty" : {
+				  "type" : "string",
+				  "description" : "Vendor contracting party name",
+				  "maxLength" : 50
+				},
+				"signingPerson" : {
+				  "type" : "string",
+				  "description" : "Signing person",
+				  "maxLength" : 50
+				},
+				"technicalContact" : {
+				  "type" : "string",
+				  "description" : "Technical contact",
+				  "maxLength" : 50
+				},
+				"technicalEmail" : {
+				  "type" : "string",
+				  "description" : "Email of technical contact",
+				  "maxLength" : 50
+				},
+				"technicalPhone" : {
+				  "type" : "string",
+				  "description" : "Phone number of technical contact",
+				  "maxLength" : 50
+				},
+				"ecommerceUrl" : {
+				  "type" : "string",
+				  "description" : "URL of the shop where consumers are purchasing goods and services",
+				  "maxLength" : 50
+				},
+				"ipAddress" : {
+				  "type" : "string",
+				  "description" : "Vendor IP address",
+				  "maxLength" : 50
+				},
+				"billingDescriptor" : {
+				  "type" : "string",
+				  "description" : "Billing descriptor to be used in the transactions description as vendor billing descriptor",
+				  "maxLength" : 50
+				},
+				"beneficiaryName" : {
+				  "type" : "string",
+				  "description" : "Name of primary beneficial owner of contracting party",
+				  "maxLength" : 50
+				},
+				"beneficiaryDOB" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary date of birth",
+				  "format" : "date"
+				},
+				"beneficiaryEquityOwnership" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary equity ownership, in percent",
+				  "maxLength" : 50
+				},
+				"beneficiaryAddress" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary address",
+				  "maxLength" : 50
+				},
+				"beneficiaryCity" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary city",
+				  "maxLength" : 50
+				},
+				"beneficiaryState" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary state",
+				  "maxLength" : 50
+				},
+				"beneficiaryCountry" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary country, ISO 3166",
+				  "maxLength" : 50
+				},
+				"beneficiaryPhone" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary phone number",
+				  "maxLength" : 50
+				},
+				"beneficiaryIdDoc" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary ID document",
+				  "maxLength" : 50
+				},
+				"beneficiaryIdDocCountry" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary ID document issue country, ISO 3166",
+				  "maxLength" : 50
+				},
+				"beneficiaryCitizenship" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary citizenship, ISO 3166",
+				  "maxLength" : 50
+				},
+				"beneficiaryDrivingLicence" : {
+				  "type" : "string",
+				  "description" : "Vendor beneficiary driving license",
+				  "maxLength" : 50
+				}
+			  },
+			  "required": [
+				"id",
+				"merchantId",
+				"email",
+				"company"
+			  ]
+			}
+
++ Response 200 (application/json;charset=UTF-8)
+
+	This method doesn’t return any information if successfully called. Please see the API error section for further details.
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 22:17:35 GMT
+			Connection: close
+			Content-Length: 0
