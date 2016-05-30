@@ -28,7 +28,7 @@ The container name should be "apidocs_genapi_1".
 
 Edit API Blueprint file p21RestApi.apib or other resources (*.html, images)
 
-**4. Copy local changes to Docker container**
+**4. Copy local changes to Docker Container**
 
 `> docker cp ./p21RestApi/. apidocs_genapi_1:/opt/apidocs`
 
@@ -36,7 +36,7 @@ Edit API Blueprint file p21RestApi.apib or other resources (*.html, images)
 
 `> docker exec apidocs_genapi_1 bash /opt/apidocs/generate-apidocs.sh`
 
-**6. Copy generated documentation form Docker to local filesystem**
+**6. Copy generated documentation form Docker Container to local filesystem**
 
 `> docker cp apidocs_genapi_1:/opt/apidocs/.  ./p21RestApi`
 
