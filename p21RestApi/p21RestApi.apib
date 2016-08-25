@@ -18,6 +18,7 @@ Date    | Description        | Initials   | Version
 02.05.16|Update for clarification|VB|1.11
 03.05.16|Adding Bitcoin Testnet and updating various items|BK|1.12
 19.05.16|Adding PUT, GET, PATCH|RM|1.13
+25.08.16|Update usage of delivery level|PI|1.14
 
 
 ## Confidentiality Notice
@@ -467,7 +468,8 @@ This request provides all required information in order to assign a new vendor t
 				"beneficiaryIdDoc":"9393373",
 				"beneficiaryIdDocCountry":"USA",
 				"beneficiaryCitizenship":"USA",
-				"beneficiaryDrivingLicence":"81224345"
+				"beneficiaryDrivingLicence":"81224345",
+				"deliveryLevel":6
 			}
 
 	+ Schema
@@ -731,6 +733,10 @@ This request provides all required information in order to assign a new vendor t
 				  "type" : "string",
 				  "description" : "Vendor beneficiary driving license",
 				  "maxLength" : 50
+				},
+				"deliveryLevel" : {
+				  "type" : "integer",
+				  "description" : "The number of confirmations in the Bitcoin blockchain to wait for until the status Ready for Delivery is reached for a given vendor's transaction"
 				}
 			  },
 			  "required": [
@@ -960,7 +966,7 @@ This request provides all required information in order to assign a new vendor t
 				},
 				"deliveryLevel" : {
 				  "type" : "integer",
-				  "description" : "The number of confirmations in the Bitcoin blockchain to wait for until the status Ready for Delivery is reached. If set to 0, the status is reached as soon as the transaction was broadcast in the bitcoin network. See operation PaymentStatus for more details."
+				  "description" : "The number of confirmations in the Bitcoin blockchain to wait for until the status Ready for Delivery is reached. If set, it needs to be greater than 0, since we do not support 0 delivery level. See operation PaymentStatus for more details."
 				}
 			  },
 			  "required": [
@@ -979,8 +985,7 @@ This request provides all required information in order to assign a new vendor t
 				"address1",
 				"city",
 				"postalCode",
-				"country",
-				"deliveryLevel"
+				"country"
 			  ]
 			}
 
@@ -1188,7 +1193,8 @@ This request updates all required information of a vendor associated to the give
 				"beneficiaryIdDoc":"9393373",
 				"beneficiaryIdDocCountry":"USA",
 				"beneficiaryCitizenship":"USA",
-				"beneficiaryDrivingLicence":"81224345"
+				"beneficiaryDrivingLicence":"81224345",
+				"deliveryLevel":6
 			}
 
 	+ Schema
@@ -1456,6 +1462,10 @@ This request updates all required information of a vendor associated to the give
 				  "type" : "string",
 				  "description" : "Vendor beneficiary driving license",
 				  "maxLength" : 50
+				},
+				"deliveryLevel" : {
+				  "type" : "integer",
+				  "description" : "The number of confirmations in the Bitcoin blockchain to wait for until the status Ready for Delivery is reached for a given vendor's transaction"
 				}
 			  },
 			  "required": [
@@ -1772,6 +1782,10 @@ This request updates all required information of a vendor associated to the give
 				  "type" : "string",
 				  "description" : "Vendor beneficiary driving license",
 				  "maxLength" : 50
+				},
+				"deliveryLevel" : {
+				  "type" : "integer",
+				  "description" : "The number of confirmations in the Bitcoin blockchain to wait for until the status Ready for Delivery is reached for a given vendor's transaction"
 				}
 			  },
 			  "required": [
