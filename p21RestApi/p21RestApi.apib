@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.14
+# Payment21® Crypto API 1.15
 
 The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
@@ -19,6 +19,7 @@ Date    | Description        | Initials   | Version
 03.05.16|Adding Bitcoin Testnet and updating various items|BK|1.12
 19.05.16|Adding PUT, GET, PATCH|RM|1.13
 25.08.16|Update usage of delivery level|PI|1.14
+09.09.16|Documenting minumum order amount|PI|1.15
 
 
 ## Confidentiality Notice
@@ -198,7 +199,7 @@ If your API key is lost or compromised, Payment21® can create a new one for you
 
 You first announce the payment to Payment21® via the P21PayByCrypto API endpoint and redirect the purchaser to the cashier page hosted by Payment21.com. After the Bitcoin payment is made, the purchaser is redirected back to your site or confirmation page.
 
-Once you have integrated our cashier page, your consumer can pay for goods and services purchased by using “crypto currency” (Bitcoin, XBT). The API will transfer consumer data to the Payment21®-system for processing.
+Once you have integrated our cashier page, your consumer can pay for goods and services purchased by using “crypto currency” (Bitcoin, XBT). The API will transfer consumer data to the Payment21®-system for processing. **Please note that the minimum payment amount is 8 USD**
 
 If a consumer profile already exists in your database (that is, the merchant’s database), you can prefill fields such as consumer first name, last name, address and other contact information automatically. The consumer enters other data fields related to the payment details and makes the payment. We have additional security fields such as ID document, passport number and driver’s license number. The data entered will be stored in the Payment21® database for future resolution.
 
@@ -853,7 +854,7 @@ This request provides all required information in order to assign a new vendor t
 				},
 				"orderAmount" : {
 				  "type" : "number",
-				  "description" : "Order amount"
+				  "description" : "Order amount. Must be greater than 8"
 				},
 				"orderCurrency" : {
 				  "type" : "string",
@@ -1001,7 +1002,7 @@ This request provides all required information in order to assign a new vendor t
 
 			{
 				"transactionId":"587a1892-18be-4836-aa0c-a7f7255cf974",
-				"redirectTo":"https://www.payment21.com/pay.html#/!/?transactionId=587a1892-18be-4836-aa0c-a7f7255cf974"
+				"redirectTo":"https://app.payment21.com/payment.html#/!/?transactionId=f687a78c-8496-4cbd-a4f9-b3ec107a2abb"
 			}
 
 	+ Schema
