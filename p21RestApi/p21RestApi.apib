@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.15
+# Payment21® Crypto API 1.16
 
 The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
@@ -20,6 +20,7 @@ Date    | Description        | Initials   | Version
 19.05.16|Adding PUT, GET, PATCH|RM|1.13
 25.08.16|Update usage of delivery level|PI|1.14
 09.09.16|Documenting minumum order amount|PI|1.15
+07.10.16|Update the sandbox test and payment page|PI|1.16
 
 
 ## Confidentiality Notice
@@ -214,7 +215,7 @@ Your consumer can now choose to pay by “crypto currency” (Bitcoin, XBT).
 
 Before the payment page is displayed for the consumer, the merchant sends information about the order through the API for verification, validation and authentication. This verification is done on the Payment21® side. Once the order information is successfully verified, the consumer will be redirected to the Payment21® crypto payment page. This is a secure form, which allows the consumer to pay using Bitcoin. See an example on the demo store: https://app.payment21.com/demoshop.html.
 
-As the first step, consumers have to explicitly agree with the Terms and Conditions by marking a checkbox and clicking “Confirm”.
+As the first step, consumers have to explicitly agree with the Terms and Conditions by marking a checkbox and clicking “Start Payment”.
 
 ![name](images/payment_details.jpg)
 
@@ -288,16 +289,6 @@ After clicking on “Generate Merchant API Key”, you will see your merchant ID
 
 ![name](images/api_key.png)
 
-Using these credentials, you can call the method P21PayByCrypto using a different URL than in production: 
-
-/api/mapi/sandbox/p21PayByCrypto (instead of /api/mapi/p21PayByCrypto)
-
-For simplicity, some checks are omitted in the sandbox. For example, you can specify any vendor ID if you have not created a vendor yet. The success and error responses returned by the sandbox are identical to the live system.
-
-Before you start implementing and calling the sandbox service, you need to enter a redirect URL, which should be part of your website. After the purchaser has completed the payment, he/she is redirected to this URL. You can include the value “{transactionId}”, which is automatically replaced with the ID of the completed transaction. This enables you to identify the payment when the purchaser is redirected from the cashier page back to your site.
-
-After you successfully called the sandbox API method, you can continue with the Payment21® merchant onboarding process.
-
 ### 4.2 Bitcoin Testnet (Customization upon request)
 
 **If you want to test our Bitcoin Cashier System with the Bitcoin Testnet, you need to set up your Test Wallet first.**
@@ -330,6 +321,7 @@ The JSON/REST API will return HTTP Status Code 200 if the request was processed 
  MERCHANT_NOT_APPROVED | 403 | The merchant is currently not approved
  PURCHASER_NOT_VERIFIED | 403 | The purchaser is not verified (for merchants who only accept verified purchasers)
  MAPI_UNKNOWN_VENDOR | 404 | The given vendor ID is unknown
+ MAPI_REDIRECT_URL_MISSING | 400 | The merchant's redirect URL is not specified
  ENTITY_NOT_FOUND | 404 | A general error that the requested entity is not found
  MAPI_CONTACT_CUSTOMER_SUPPORT | 403 | The call couldn’t be completed, contact Payment21® customer support for manual resolution
  INTERNAL_SERVER_ERROR | 500 | An unknown error occurred, please try again later or contact Payment21® for clarification
