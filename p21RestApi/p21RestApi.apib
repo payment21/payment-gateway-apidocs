@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.16
+# Payment21® Crypto API 1.17
 
 The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
@@ -21,7 +21,7 @@ Date    | Description        | Initials   | Version
 25.08.16|Update usage of delivery level|PI|1.14
 09.09.16|Documenting minumum order amount|PI|1.15
 07.10.16|Update the sandbox test and payment page|PI|1.16
-
+19.10.16|Add business address to vendor requests|PI|1.17
 
 ## Confidentiality Notice
 
@@ -433,6 +433,11 @@ This request provides all required information in order to assign a new vendor t
 				"mailingCity":"Brooklyn",
 				"mailingState":"N.Y.",
 				"mailingCountry":"USA",
+				"businessAddress": "123 90th Street",
+                "businessPostalCode": "11209",
+                "businessCity": "Brooklyn",
+                "businessState": "N.Y.",
+                "businessCountry": "USA",
 				"phone":"718 123 4567",
 				"fax":"718 123 4568",
 				"taxIdNumber":"123456578",
@@ -581,6 +586,31 @@ This request provides all required information in order to assign a new vendor t
 				"mailingCountry" : {
 				  "type" : "string",
 				  "description" : "Country of physical location, ISO 3166",
+				  "maxLength" : 50
+				},
+				"businessAddress" : {
+				  "type" : "string",
+				  "description" : "Business location address",
+				  "maxLength" : 50
+				},
+				"businessPostalCode" : {
+				  "type" : "string",
+				  "description" : "Business location postal code",
+				  "maxLength" : 50
+				},
+				"businessCity" : {
+				  "type" : "string",
+				  "description" : "Business location city",
+				  "maxLength" : 50
+				},
+				"businessState" : {
+				  "type" : "string",
+				  "description" : "Business location state",
+				  "maxLength" : 50
+				},
+				"businessCountry" : {
+				  "type" : "string",
+				  "description" : "Country of business location, ISO 3166",
 				  "maxLength" : 50
 				},
 				"phone" : {
@@ -1153,6 +1183,11 @@ This request updates all required information of a vendor associated to the give
 				"mailingCity":"Brooklyn",
 				"mailingState":"N.Y.",
 				"mailingCountry":"USA",
+				"businessAddress": "123 90th Street",
+                "businessPostalCode": "11209",
+                "businessCity": "Brooklyn",
+                "businessState": "N.Y.",
+                "businessCountry": "USA",
 				"phone":"718 123 4567",
 				"fax":"718 123 4568",
 				"taxIdNumber":"123456578",
@@ -1305,6 +1340,31 @@ This request updates all required information of a vendor associated to the give
 				"mailingCountry" : {
 				  "type" : "string",
 				  "description" : "Country of physical location, ISO 3166",
+				  "maxLength" : 50
+				},
+				"businessAddress" : {
+				  "type" : "string",
+				  "description" : "Business location address",
+				  "maxLength" : 50
+				},
+				"businessPostalCode" : {
+				  "type" : "string",
+				  "description" : "Business location postal code",
+				  "maxLength" : 50
+				},
+				"businessCity" : {
+				  "type" : "string",
+				  "description" : "Business location city",
+				  "maxLength" : 50
+				},
+				"businessState" : {
+				  "type" : "string",
+				  "description" : "Business location state",
+				  "maxLength" : 50
+				},
+				"businessCountry" : {
+				  "type" : "string",
+				  "description" : "Country of business location, ISO 3166",
 				  "maxLength" : 50
 				},
 				"phone" : {
@@ -1625,6 +1685,31 @@ This request updates all required information of a vendor associated to the give
 				"mailingCountry" : {
 				  "type" : "string",
 				  "description" : "Country of physical location, ISO 3166",
+				  "maxLength" : 50
+				},
+				"businessAddress" : {
+				  "type" : "string",
+				  "description" : "Business location address",
+				  "maxLength" : 50
+				},
+				"businessPostalCode" : {
+				  "type" : "string",
+				  "description" : "Business location postal code",
+				  "maxLength" : 50
+				},
+				"businessCity" : {
+				  "type" : "string",
+				  "description" : "Business location city",
+				  "maxLength" : 50
+				},
+				"businessState" : {
+				  "type" : "string",
+				  "description" : "Business location state",
+				  "maxLength" : 50
+				},
+				"businessCountry" : {
+				  "type" : "string",
+				  "description" : "Country of business location, ISO 3166",
 				  "maxLength" : 50
 				},
 				"phone" : {
