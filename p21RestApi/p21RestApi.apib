@@ -22,6 +22,7 @@ Date    | Description        | Initials   | Version
 09.09.16|Documenting minumum order amount|PI|1.15
 07.10.16|Update the sandbox test and payment page|PI|1.16
 19.10.16|Add business address to vendor requests|PI|1.17
+31.10.16|Improve description for response error codes|PI|1.18
 
 ## Confidentiality Notice
 
@@ -310,21 +311,24 @@ https://bitcoin.org/en/getting-started
 
 The JSON/REST API will return HTTP Status Code 200 if the request was processed successfully. Other codes signal errors as defined in the HTTP Protocol. To provide detailed information about the cause, an error object will be returned. It contains a field “error” with a string that is described in the table below.
 
- Error Code | HTTP Status | Message
-------------|-------------|--------------------------
- OK          | 200         | Request was successful
- BAD_REQUEST | 400 | General error, e.g. the request contained invalid data
- LOW_PAYMENT_AMOUNT | 400 | The requested payment amount is too low
- HTTP_REQUEST_METHOD_NOT_SUPPORTED | 400 | The requested HTTP verb is not supported
- WRONG_USERNAME_OR_PASSWORD | 401 | The supplied credentials are incorrect or don’t match
- MERCHANT_DISABLED | 403 | The merchant account is disabled
- MERCHANT_NOT_APPROVED | 403 | The merchant is currently not approved
- PURCHASER_NOT_VERIFIED | 403 | The purchaser is not verified (for merchants who only accept verified purchasers)
- MAPI_UNKNOWN_VENDOR | 404 | The given vendor ID is unknown
- MAPI_REDIRECT_URL_MISSING | 400 | The merchant's redirect URL is not specified
- ENTITY_NOT_FOUND | 404 | A general error that the requested entity is not found
- MAPI_CONTACT_CUSTOMER_SUPPORT | 403 | The call couldn’t be completed, contact Payment21® customer support for manual resolution
- INTERNAL_SERVER_ERROR | 500 | An unknown error occurred, please try again later or contact Payment21® for clarification
+ Error | HTTP Status | Message | Code 
+------------|-------------|--------------------------|------------
+ OK          | 200         | Request was successful | -
+ BAD_REQUEST | 400 | General error, e.g. the request contained invalid data | 7
+ LOW_PAYMENT_AMOUNT | 400 | Low payment amount. Please refer to documentation for minimum payment amount supported | 80
+ HTTP_REQUEST_METHOD_NOT_SUPPORTED | 400 | The requested HTTP verb is not supported | 113
+ WRONG_USERNAME_OR_PASSWORD | 401 | Wrong 'username', 'password' or 'apiKey' provided | 8
+ MERCHANT_DISABLED | 403 | The merchant account is disabled | 34
+ MERCHANT_NOT_APPROVED | 403 | The merchant is currently not approved. Please approve the merchant before proceeding | 50  
+ PURCHASER_NOT_VERIFIED | 403 | The purchaser is not verified. Please verify it before proceeding | 38 
+ PURCHASER_DISABLED | 403 | The Purchaser has been disabled. Please enable it before proceeding | 117 
+ MAPI_UNKNOWN_VENDOR | 404 | Cannot find vendor with the given ID | 101
+ MAPI_REDIRECT_URL_MISSING | 400 | Merchant didn't specify RedirectURL. Please specify RedirectURL before proceeding | 103
+ ENTITY_NOT_FOUND | 404 | The entity you are requesting is not found | 3 
+ MAPI_CONTACT_CUSTOMER_SUPPORT | 403 | The call couldn’t be completed, contact Payment21® customer support for manual resolution | 102
+ INTERNAL_SERVER_ERROR | 500 | An unknown error occurred, please try again later or contact Payment21® for clarification | 2
+ INVALID_ARGUMENT_EMAIL | 400 | Invalid email. Please specify valid email address | 118
+ INVALID_ARGUMENT_DELIVERY_LEVEL | 400 | Please specify 'deliveryLevel' argument | 119
 
 **Payment21® Crypto (P21PayByCrypto) Error Response Example:**
 
@@ -340,7 +344,9 @@ Connection: close
 Content-Length: 28
 
 {
-  "error":"ENTITY_NOT_FOUND"
+  "error":"ENTITY_NOT_FOUND",
+  "code": 3,
+  "message": "The entity you are requesting is not found"
 }
 ```
 
@@ -354,6 +360,8 @@ Content-Type: application/json;charset=UTF-8
 
 {
   "error": "BAD_REQUEST",
+  "code": 7,
+  "message": "General error, e.g. the request contained invalid data",
   "fieldErrors": [
     {
       "field": "email",
@@ -377,6 +385,8 @@ Content-Type: application/json;charset=UTF-8
 
 {
   "error": "BAD_REQUEST",
+  "code": 7,
+  "message": "General error, e.g. the request contained invalid data",
   "fieldErrors": [
     {
       "field": "company",
@@ -1052,6 +1062,54 @@ This request provides all required information in order to assign a new vendor t
 			  ]
 			}
 
++ Response 401 (application/json;charset=UTF-8)
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 17:42:31 GMT
+			Connection: close
+			Content-Length: 135
+
+    + Body
+
+			{
+				"error": "WRONG_USERNAME_OR_PASSWORD",
+				"code": 50,
+				"message": "Wrong 'username', 'password' or 'apiKey' provided"
+			}
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"error": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Error as found in the Error Code List"
+				},
+				"code": {
+				  "type": "integer",
+				  "description": "Error code as numerical value"
+				},
+				"redirectTo": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 250,
+				  "description": "Descriptive message for the error"
+				}
+			  },
+			  "required": [
+				"error",
+				"code",
+				"message"
+			  ]
+			}
 
 ## PaymentStatus [GET /api/mapi/paymentStatus/{merchantId}/{transactionId}]
 
@@ -1137,6 +1195,55 @@ This request provides all required information in order to assign a new vendor t
 			  },
 			  "required": [
 				"status"
+			  ]
+			}
+			
++ Response 401 (application/json;charset=UTF-8)
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 17:42:31 GMT
+			Connection: close
+			Content-Length: 135
+
+    + Body
+
+			{
+				"error": "WRONG_USERNAME_OR_PASSWORD",
+				"code": 50,
+				"message": "Wrong 'username', 'password' or 'apiKey' provided"
+			}
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"error": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Error as found in the Error Code List"
+				},
+				"code": {
+				  "type": "integer",
+				  "description": "Error code as numerical value"
+				},
+				"redirectTo": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 250,
+				  "description": "Descriptive message for the error"
+				}
+			  },
+			  "required": [
+				"error",
+				"code",
+				"message"
 			  ]
 			}
 
