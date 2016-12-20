@@ -1,0 +1,35 @@
+<table>
+	<thead>
+		<tr>
+			<th>Field</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Payout Status</td>
+			<td>The status of the requested payout.<br/>
+				Possible values:<br/>
+				<strong>Initialized:</strong> The Payout has been initialized<br/>
+				<strong>Awaiting_Verification:</strong> The payee needs to trigger the KYC verification process in Payment21 <br/>
+				<strong>Verified:</strong> The payee has succesfully finished the KYC process in Payment21 and is ready to accept the payout<br/>
+				<strong>Awaiting_Funding:</strong> Awaiting the necessary fundings for processing the payout<br/>
+				<strong>Funded:</strong> The payout has been funded and is ready to be sent to the payee<br/>
+				<strong>Awaiting_Confirmation:</strong> The transaction was sent to the payee. Waiting for receipt confirmation<br/>
+				<strong>Finished:</strong> The Payout has been sent and confirmed by the payee<br/>
+				<strong>Expired:</strong> The Payout has expired<br/>
+				<strong>Canceled:</strong> The Payout has been canceled by the payee<br/>
+				<strong>Failed:</strong> The Payout has failed for other reasons<br/>
+			</td>
+		</tr>
+		<tr>
+			<td>Code</td>
+			<td>
+				<strong>1..7:</strong> Positive code from 1-7 means the Payout is still in progress and the final status is not reached yet <br/>
+				<strong>-2:</strong> When the payout status is Failed<br/>
+				<strong>-3:</strong> When the payout status is Expired<br/>
+				<strong>-4:</strong> When the payout status is Canceled<br/>
+			</td>
+		</tr>
+	</tbody>
+</table>

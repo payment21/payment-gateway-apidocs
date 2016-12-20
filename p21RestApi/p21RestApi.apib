@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.17
+# Payment21® Crypto API 1.19
 
 The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
@@ -23,6 +23,7 @@ Date    | Description        | Initials   | Version
 07.10.16|Update the sandbox test and payment page|PI|1.16
 19.10.16|Add business address to vendor requests|PI|1.17
 31.10.16|Improve description for response error codes|PI|1.18
+20.12.16|Add payout documentation|PI|1.19
 
 ## Confidentiality Notice
 
@@ -56,7 +57,7 @@ The APIs are easy to integrate and you will be able to process transactions in a
 
 ### 1.1 Supported Use Cases
 
-**The underlying API support the following use cases that are in general sufficient to perform crypto payment transaction.**
+**The underlying API support the following use cases that are in general sufficient to perform crypto incoming(payment) and outgoing(payout) transactions.**
 
 ![supported use cases](images/supported_use_cases.png)
 
@@ -122,6 +123,29 @@ You can call the API method PaymentStatus to check if the payment was successful
 
 Note: You can query the PaymentStatus at any time. We recommend checking the status after a short period of time in case the purchaser has interrupted the flow (e.g. by closing their browser window).
 
+### 1.5 Payment21® Payout Page
+
+**We also provide a checkout user interface for the payout requests where the payee can specify the Bitcoin address for receiving the payout .**
+
+![payout request](images/your_payout_request.png)
+
+**Merchants simply redirect the purchaser to this payout page where the consumer initiates the Bitcoin payout request.**
+
+Once the payee enters the Bitcoin address, the payout is initialized and waiting to be further processed. The payee data will be transferred to the Payment21® system for verification, validation and processing. Depending on the configuration, the payee needs to go through the Payment21 KYC verification process before being eligible to accept the payout.
+
+See an example on the demo store: https://app.payment21.com/demopayout.html.
+
+### 1.6 Payout Use Case
+
+**The integration of the Payment21® payout page consists only of a few steps.**
+
+1. The purchaser selects Payment21® for withdrawals (payout)
+2. Your application calls the API method “P21Payout”
+3. Your site redirects the payee to the returned redirectURL
+4. The payee will see the Payment21® Payout Page, enter the Bitcoin Address and starts the payout
+5. After confirming the payout, the payee is redirected back to your site.
+6. Call the API method PayoutStatus to check the status of the payout
+
 
 ## 2 Payment21® JSON/REST API
 
@@ -151,6 +175,8 @@ The web service is accessible from https://app.payment21.com/api/mapi, supportin
  UpdateVendor   | Update previously created vendor data
  P21PayByCrypto | Creates a crypto payment request for the specified consumer
  PaymentStatus  | Returns the status of the payment
+ P21Payout	| Creates a payout request from merchant to the specified payee
+ PayoutStatus	| Returns the status of the payout
 
 
 **Input Parameters to differ or combine merchant ID and vendor ID**
@@ -276,9 +302,53 @@ You can call the API method PaymentStatus to check if the payment was successful
 Note: You can query the PaymentStatus at any time. We recommend checking the status after a short period of time in case the purchaser has interrupted the flow (e.g. by closing their browser window).
 
 
-## 4 Sandbox API Connectivity Test
+## 4 Payment21® Payout Page
 
-### 4.1 Merchant Back Office
+### 4.1 Introduction
+
+**The payout page is made for a simple and fast integration and provides all the necessary user interactions of the payee to complete the payout.**
+
+![payout page](images/your_payout_request_sample.png)
+
+
+### 4.2 How to integrate
+
+**The integration of the Payment21® payout page consists only of a few steps.**
+
+1. The purchaser selects Payment21® for withdrawals (payout)
+2. Your application calls the API method “P21Payout”
+3. Your site redirects the payee to the returned redirectURL
+4. The payee will see the Payment21® Payout Page, enter the Bitcoin Address and starts the payout
+5. After confirming the payout, the payee is redirected back to your site.
+6. Call the API method PayoutStatus to check the status of the payout
+
+
+**Step 1: The purchaser selects Payment21® for withdrawals (payout)**  
+You have to add an option in your application for withdrawal (payout)
+
+**Step 2: Your application calls the API method “P21Payout”**  
+Your application calls the API method P21Payout to initialize the payout. This call includes details such as the amount, vendor and payee details.
+
+The P21Payout response contains a unique transaction-ID, which should be stored. You can use it to retrieve the status of the payout.
+
+The second value returned is a redirectURL used subsequently.
+
+**Step 3: Your site redirects the payee to the returned redirectURL**  
+You should now redirect the purchaser to the redirectURL which actually represents the Payment21® Payout Page.
+
+**Step 4: The payee will see the Payment21® Payout Page, enter the Bitcoin Address and starts the payout**  
+The payee can see the requested payout amount and the corresponding Bitcoin amount that will be sent to the payee. Before starting the payout, the payee needs to enter a valid Bitcoin Address.
+
+**Step 5: After confirming the payout, the payee is redirected back to your site**  
+After the payout is started, the payee is redirected back to the 
+
+**Step 6: Call the API method PayoutStatus to check the status of the payout**  
+You can call the API method PayoutStatus at any time to check the status of the payout.
+
+
+## 5 Sandbox API Connectivity Test
+
+### 5.1 Merchant Back Office
 
 **During the signup process, you need to test the API connectivity through the sandbox test application in your merchant account back office. This enables you to test your API implementation in an early stage of your onboarding process with Payment21.com.**
 
@@ -290,7 +360,7 @@ After clicking on “Generate Merchant API Key”, you will see your merchant ID
 
 ![name](images/api_key.png)
 
-### 4.2 Bitcoin Testnet (Customization upon request)
+### 5.2 Bitcoin Testnet (Customization upon request)
 
 **If you want to test our Bitcoin Cashier System with the Bitcoin Testnet, you need to set up your Test Wallet first.**
 
@@ -303,9 +373,21 @@ If you want to test the Payment21® Bitcoin Cashier System with real Bitcoins, y
 https://bitcoin.org/en/getting-started
 
 
-## 5 Appendix
+## 6 Appendix
 
-### 5.1 API Response & Error Codes
+### 6.1 Supported processing currencies
+
+**Payment21® supports the following processing currencies for Payments and Payouts. The amounts for all currencies are expressed as decimal numbers**
+
+ Currency | Description
+------------|-------------
+ USD          | United States dollar         
+ EUR          | Euro  
+ GBP          | British Pound
+ CHF          | Swiss Franc    
+ JPY          | Japanese yen
+
+### 6.2 API Response & Error Codes
 
 **Payment21® provide a full set of response and error codes.**
 
@@ -330,7 +412,6 @@ The JSON/REST API will return HTTP Status Code 200 if the request was processed 
  INVALID_ARGUMENT_EMAIL | 400 | Invalid email. Please specify valid email address | 118
  INVALID_ARGUMENT_DELIVERY_LEVEL | 400 | Please specify 'deliveryLevel' argument | 119
 
-**Payment21® Crypto (P21PayByCrypto) Error Response Example:**
 
 ```
 HTTP/1.1 404 Not Found
@@ -1233,7 +1314,411 @@ This request provides all required information in order to assign a new vendor t
 				  "type": "integer",
 				  "description": "Error code as numerical value"
 				},
+				"message": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 250,
+				  "description": "Descriptive message for the error"
+				}
+			  },
+			  "required": [
+				"error",
+				"code",
+				"message"
+			  ]
+			}
+
+## P21Payout [POST /api/mapi/p21Payout]
+
++ Request (application/json;charset=UTF-8)
+
+	Input Parameters (An object of “Payment21® Crypto Payout (P21Payout)” with the following member variables):
+	
+    + Headers
+
+			apiKey: apiKeyDEMO
+			Accept: application/json, application/*+json
+			Cache-Control: no-cache
+			Pragma: no-cache
+			User-Agent: Java/1.8.0_25
+			Host: app.payment21.com
+			Connection: close
+			Content-Length: 539
+
+    + Body
+
+			{
+				"merchantId":-1,
+				"vendorId":59,
+				"payoutAmount":20,
+				"payoutCurrency":"USD",
+				"merchantConsumerId":"-2",
+				"merchantTransId":"mt32789",
+				"firstName":"John",
+				"lastName":"Smith",
+				"dateOfBirth":"1970-12-27",
+				"docId":"D234890",
+				"phone":"+1123456789",
+				"email":"john@abccompanyChange.com",
+				"address1":"123 First Street",
+				"address2":"",
+				"driverLicenseNumber":"ddr-1234",
+				"passportNumber":"GW34576",
+				"city":"New York",
+				"state":"NY",
+				"postalCode":"12345",
+				"country":"US"
+			}
+
+	+ Schema
+
+			{
+			  "title" : "P21PayoutRequest",
+			  "description" : "Input parameters for the operation P21Payout",
+			  "type" : "object",
+			  "$schema" : "http://json-schema.org/draft-04/schema#",
+			  "properties" : {
+				"merchantId" : {
+				  "type" : "integer",
+				  "description" : "Merchant User ID as assigned by Payment21.com"
+				},
+				"vendorId" : {
+				  "type" : "integer",
+				  "description" : "Vendor ID as assigned by Payment21.com"
+				},
+				"apiKey" : {
+				  "type" : "string",
+				  "description" : "Merchant API Key as assigned by Payment21.com",
+				  "maxLength" : 50,
+				  "in": "header|body"
+				},
+				"payoutAmount" : {
+				  "type" : "number",
+				  "description" : “Payout amount."
+				},
+				"payoutCurrency" : {
+				  "type" : "string",
+				  "description" : "Currency code, ISO 4217"
+				},
+				"merchantConsumerId" : {
+				  "type" : "string",
+				  "description" : "An ID which uniquely identifies the purchaser of the given vendor. Successive calls have to use the same id for the same purchaser.",
+				  "maxLength" : 36,
+				  "minLength" : 1
+				},
+				"merchantTransId" : {
+				  "type" : "string",
+				  "description" : "Merchant payout ID",
+				  "maxLength" : 36
+				},
+				"firstName" : {
+				  "type" : "string",
+				  "description" : "Consumer's first name",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"lastName" : {
+				  "type" : "string",
+				  "description" : "Consumer's last name",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"dateOfBirth" : {
+				  "type" : "string",
+				  "description" : "Consumer's date of birth",
+				  "format" : "date"
+				},
+				"docId" : {
+				  "type" : "string",
+				  "description" : "Identification document number",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"phone" : {
+				  "type" : "string",
+				  "description" : "Consumer's phone",
+				  "maxLength" : 50
+				},
+				"email" : {
+				  "type" : "string",
+				  "description" : "Consumer's email address",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"address1" : {
+				  "type" : "string",
+				  "description" : "Consumer's address field one",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"address2" : {
+				  "type" : "string",
+				  "description" : "Consumer's address field two",
+				  "maxLength" : 50
+				},
+				"driverLicenseNumber" : {
+				  "type" : "string",
+				  "description" : "Consumer's driver license number",
+				  "maxLength" : 50
+				},
+				"passportNumber" : {
+				  "type" : "string",
+				  "description" : "Consumer's passport number",
+				  "maxLength" : 50
+				},
+				"city" : {
+				  "type" : "string",
+				  "description" : "Consumer's address city",
+				  "maxLength" : 50,
+				  "minLength" : 1
+				},
+				"state" : {
+				  "type" : "string",
+				  "description" : "Consumer's address state code",
+				  "maxLength" : 50
+				},
+				"postalCode" : {
+				  "type" : "string",
+				  "description" : "5 digit postal code in the consumer's country (or ZIP)",
+				  "maxLength" : 10,
+				  "minLength" : 1
+				},
+				"country" : {
+				  "type" : "string",
+				  "description" : "Consumer's country, e.g. 'United Kingdom'",
+				  "maxLength" : 50
+				}
+			  },
+			  "required": [
+				"merchantId",
+				"vendorId",
+				"payoutAmount",
+				"payoutCurrency",
+				"merchantConsumerId",
+				"firstName",
+				"lastName",
+				"email",
+				"country"
+			  ]
+			}
+
++ Response 200 (application/json;charset=UTF-8)
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 17:42:31 GMT
+			Connection: close
+			Content-Length: 135
+
+
+    + Body
+
+			{
+				"transactionId":"633d4fb2-dd0c-4d5b-87e7-c6b2349adbab",
+				"redirectTo":"https://app.payment21.com/payout.html#/!/?transactionId=633d4fb2-dd0c-4d5b-87e7-c6b2349adbab"
+			}
+
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"transactionId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Contains transaction ID of the added payout request”
+				},
 				"redirectTo": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 250,
+				  "description": "The URL the payee needs to be redirected to"
+				}
+			  },
+			  "required": [
+				"transactionId",
+				"redirectTo"
+			  ]
+			}
+
++ Response 401 (application/json;charset=UTF-8)
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 17:42:31 GMT
+			Connection: close
+			Content-Length: 135
+
+    + Body
+
+			{
+				"error": "WRONG_USERNAME_OR_PASSWORD",
+				"code": 50,
+				"message": "Wrong 'username', 'password' or 'apiKey' provided"
+			}
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"error": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Error as found in the Error Code List"
+				},
+				"code": {
+				  "type": "integer",
+				  "description": "Error code as numerical value"
+				},
+				"message": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 250,
+				  "description": "Descriptive message for the error"
+				}
+			  },
+			  "required": [
+				"error",
+				"code",
+				"message"
+			  ]
+			}
+
+## Payout Status [GET /api/mapi//payoutStatus/{merchantId}/{transactionId}]
+
++ Parameters
+	+ merchantId: `-1` (required, number)
+	+ transactionId: `633d4fb2-dd0c-4d5b-87e7-c6b2349adbab` (required, string)
+
++ Request
+
+	+ Headers
+
+			apiKey: demoShopApiKey
+			Accept: application/json, application/*+json
+			Cache-Control: no-cache
+			Pragma: no-cache
+			User-Agent: Java/1.8.0_25 
+			Host: app.payment21.com
+			Connection: close
+
+	+ Schema
+
+			{
+			  "description": "Path and header parameters",
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "parameters": {
+				"apiKey": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Merchant API Key as assigned by Payment21.com",
+				  "in": "header"
+				},
+				"merchantId": {
+				  "type": "integer",
+				  "description": "Merchant User ID as assigned by Payment21.com",
+				  "in": "path"
+				},
+				"transactionId": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "The transaction ID for which to get the status",
+				  "in": "path"
+				}
+			  },
+			  "required": [
+				"apiKey",
+				"merchantId",
+				"transactionId"
+			  ]
+			}
+
+
++ Response 200 (application/json;charset=UTF-8)
+
+    **Return Response:**
+
+    <!-- include(payout_status_table.html) -->
+
+    + Body
+
+			{
+				"status":"Initialized",
+				"code": 1,
+			}
+
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"status": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "The status of the requested payout.”
+				},
+				“code”: {
+				  "type": "integer",
+				  "description": “Numeric code for the status“
+				}
+			  },
+			  "required": [
+				"status"
+			  ]
+			}
+			
++ Response 401 (application/json;charset=UTF-8)
+
+    + Headers
+
+			Server: Apache-Coyote/1.1
+			X-Content-Type-Options: nosniff
+			X-XSS-Protection: 1; mode=block
+			X-Frame-Options: DENY
+			Date: Wed, 13 Jan 2016 17:42:31 GMT
+			Connection: close
+			Content-Length: 135
+
+    + Body
+
+			{
+				"error": "WRONG_USERNAME_OR_PASSWORD",
+				"code": 50,
+				"message": "Wrong 'username', 'password' or 'apiKey' provided"
+			}
+	+ Schema
+
+			{
+			  "$schema": "http://json-schema.org/draft-04/schema#",
+			  "type": "object",
+			  "properties": {
+				"error": {
+				  "type": "string",
+				  "minLength": 1,
+				  "maxLength": 50,
+				  "description": "Error as found in the Error Code List"
+				},
+				"code": {
+				  "type": "integer",
+				  "description": "Error code as numerical value"
+				},
+				"message": {
 				  "type": "string",
 				  "minLength": 1,
 				  "maxLength": 250,
