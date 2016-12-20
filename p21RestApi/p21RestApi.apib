@@ -125,25 +125,25 @@ Note: You can query the PaymentStatus at any time. We recommend checking the sta
 
 ### 1.5 Payment21® Payout Page
 
-**We also provide a checkout user interface for the payout requests where the payee can specify the Bitcoin address for receiving the payout .**
+**We also provide a checkout user interface for the payout requests where the payee can specify the Bitcoin address for receiving the payout.**
 
-![payout request](images/your_payout_request.png)
+![payout_request](images/your_payout_request.png)
 
-**Merchants simply redirect the purchaser to this payout page where the consumer initiates the Bitcoin payout request.**
+**Merchants simply redirect the payee to this payout page where the payee initiates the Bitcoin payout request.**
 
-Once the payee enters the Bitcoin address, the payout is initialized and waiting to be further processed. The payee data will be transferred to the Payment21® system for verification, validation and processing. Depending on the configuration, the payee needs to go through the Payment21 KYC verification process before being eligible to accept the payout.
+Once the payee enters the Bitcoin address, the payout is initialized and waiting to be further processed. The payee data will be transferred to the Payment21® system for verification, validation and processing. Depending on the configuration, the payee needs to go through the AML/KYC verification process before being eligible to accept the payout.
 
-See an example on the demo store: https://app.payment21.com/demopayout.html.
+See an example on the demo payout: https://app.payment21.com/demopayout.html.
 
 ### 1.6 Payout Use Case
 
-**The integration of the Payment21® payout page consists only of a few steps.**
+**The integration of the Payment21® payout page consists of a few steps,**
 
-1. The purchaser selects Payment21® for withdrawals (payout)
+1. The payee selects Bitcoin for withdrawals (payout)
 2. Your application calls the API method “P21Payout”
 3. Your site redirects the payee to the returned redirectURL
-4. The payee will see the Payment21® Payout Page, enter the Bitcoin Address and starts the payout
-5. After confirming the payout, the payee is redirected back to your site.
+4. The payee will see the Payment21® Payout Page, enters the Bitcoin address and starts the payout
+5. After confirming the payout, the payee is redirected back to your site
 6. Call the API method PayoutStatus to check the status of the payout
 
 
@@ -308,22 +308,22 @@ Note: You can query the PaymentStatus at any time. We recommend checking the sta
 
 **The payout page is made for a simple and fast integration and provides all the necessary user interactions of the payee to complete the payout.**
 
-![payout page](images/your_payout_request_sample.png)
+![payout_page](images/your_payout_request_sample.png)
 
 
 ### 4.2 How to integrate
 
-**The integration of the Payment21® payout page consists only of a few steps.**
+**The integration of the Payment21® payout page consists of a few steps,**
 
-1. The purchaser selects Payment21® for withdrawals (payout)
+1. The payee selects Bitcoin for withdrawals (payout)
 2. Your application calls the API method “P21Payout”
 3. Your site redirects the payee to the returned redirectURL
-4. The payee will see the Payment21® Payout Page, enter the Bitcoin Address and starts the payout
-5. After confirming the payout, the payee is redirected back to your site.
+4. The payee will see the Payment21® Payout Page, enters the Bitcoin address and starts the payout
+5. After confirming the payout, the payee is redirected back to your site
 6. Call the API method PayoutStatus to check the status of the payout
 
 
-**Step 1: The purchaser selects Payment21® for withdrawals (payout)**  
+**Step 1: The payee selects Payment21® for withdrawals (payout)**  
 You have to add an option in your application for withdrawal (payout)
 
 **Step 2: Your application calls the API method “P21Payout”**  
@@ -334,13 +334,13 @@ The P21Payout response contains a unique transaction-ID, which should be stored.
 The second value returned is a redirectURL used subsequently.
 
 **Step 3: Your site redirects the payee to the returned redirectURL**  
-You should now redirect the purchaser to the redirectURL which actually represents the Payment21® Payout Page.
+You should now redirect the payee to the redirectURL which actually represents the Payment21® Payout Page.
 
-**Step 4: The payee will see the Payment21® Payout Page, enter the Bitcoin Address and starts the payout**  
-The payee can see the requested payout amount and the corresponding Bitcoin amount that will be sent to the payee. Before starting the payout, the payee needs to enter a valid Bitcoin Address.
+**Step 4: The payee will see the Payment21® Payout Page, enter the Bitcoin address and starts the payout**  
+The payee can see the requested payout amount and the corresponding Bitcoin amount that will be sent to the payee. Before starting the payout, the payee needs to enter a valid Bitcoin address.
 
 **Step 5: After confirming the payout, the payee is redirected back to your site**  
-After the payout is started, the payee is redirected back to the 
+After the payout is started, the payee is redirected back to your site.
 
 **Step 6: Call the API method PayoutStatus to check the status of the payout**  
 You can call the API method PayoutStatus at any time to check the status of the payout.
@@ -360,13 +360,17 @@ After clicking on “Generate Merchant API Key”, you will see your merchant ID
 
 ![name](images/api_key.png)
 
-### 5.2 Bitcoin Testnet (Customization upon request)
+### 5.2 Bitcoin Testnet
 
 **If you want to test our Bitcoin Cashier System with the Bitcoin Testnet, you need to set up your Test Wallet first.**
 
 The Bitcoin Testnet is an alternative Bitcoin block chain, to be used for testing. Testnet coins are separate and distinct from actual Bitcoins, and are never supposed to have any value. This allows application developers or Bitcoin testers to experiment, without having to use real Bitcoins.
 
 https://en.bitcoin.it/wiki/Testnet
+
+If you want to test the Payment21® Bitcoin Cashier System using the Bitcoin Testnet, you can use our sandbox environment.
+
+https://sandbox.payment21.com
 
 If you want to test the Payment21® Bitcoin Cashier System with real Bitcoins, you need to set up your Bitcoin Wallet and purchase Bitcoin first.
 
@@ -377,15 +381,15 @@ https://bitcoin.org/en/getting-started
 
 ### 6.1 Supported processing currencies
 
-**Payment21® supports the following processing currencies for Payments and Payouts. The amounts for all currencies are expressed as decimal numbers**
+**Payment21® supports the following processing currencies for incoming and outgoing transactions. The amounts for all currencies are expressed as decimal numbers.**
 
  Currency | Description
 ------------|-------------
- USD          | United States dollar         
+ USD          | United States Dollar         
  EUR          | Euro  
  GBP          | British Pound
  CHF          | Swiss Franc    
- JPY          | Japanese yen
+ JPY          | Japanese Yen
 
 ### 6.2 API Response & Error Codes
 
