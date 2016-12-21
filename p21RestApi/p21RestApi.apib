@@ -125,7 +125,7 @@ Note: You can query the PaymentStatus at any time. We recommend checking the sta
 
 ### 1.5 Payment21® Payout Page
 
-**We also provide a checkout user interface for the payout requests where the payee can specify the Bitcoin address for receiving the payout.**
+**We provide a checkout user interface for payout requests allowing the payee to specify a Bitcoin address for receiving payouts.**
 
 ![payout_request](images/your_payout_request.png)
 
@@ -137,12 +137,12 @@ See an example on the demo payout: https://app.payment21.com/demopayout.html.
 
 ### 1.6 Payout Use Case
 
-**The integration of the Payment21® payout page consists of a few steps,**
+**The integration of the Payment21® payout page consists of a few steps.**
 
 1. The payee selects Bitcoin for withdrawals (payout)
 2. Your application calls the API method “P21Payout”
 3. Your site redirects the payee to the returned redirectURL
-4. The payee will see the Payment21® Payout Page, enters the Bitcoin address and starts the payout
+4. The payee views the Payment21® Payout Page, enters the Bitcoin address and starts the payout
 5. After confirming the payout, the payee is redirected back to your site
 6. Call the API method PayoutStatus to check the status of the payout
 
@@ -313,18 +313,18 @@ Note: You can query the PaymentStatus at any time. We recommend checking the sta
 
 ### 4.2 How to integrate
 
-**The integration of the Payment21® payout page consists of a few steps,**
+**The integration of the Payment21® payout page consists of a few steps.**
 
 1. The payee selects Bitcoin for withdrawals (payout)
 2. Your application calls the API method “P21Payout”
 3. Your site redirects the payee to the returned redirectURL
-4. The payee will see the Payment21® Payout Page, enters the Bitcoin address and starts the payout
+4. The payee views the Payment21® Payout Page, enters the Bitcoin address and starts the payout
 5. After confirming the payout, the payee is redirected back to your site
 6. Call the API method PayoutStatus to check the status of the payout
 
 
 **Step 1: The payee selects Payment21® for withdrawals (payout)**  
-You have to add an option in your application for withdrawal (payout)
+You have to add an option in your application for withdrawals (payout)
 
 **Step 2: Your application calls the API method “P21Payout”**  
 Your application calls the API method P21Payout to initialize the payout. This call includes details such as the amount, vendor and payee details.
@@ -336,8 +336,8 @@ The second value returned is a redirectURL used subsequently.
 **Step 3: Your site redirects the payee to the returned redirectURL**  
 You should now redirect the payee to the redirectURL which actually represents the Payment21® Payout Page.
 
-**Step 4: The payee will see the Payment21® Payout Page, enter the Bitcoin address and starts the payout**  
-The payee can see the requested payout amount and the corresponding Bitcoin amount that will be sent to the payee. Before starting the payout, the payee needs to enter a valid Bitcoin address.
+**Step 4: The payee views the Payment21® Payout Page, enters the Bitcoin address and starts the payout**  
+The payee can see the requested payout amount and the corresponding bitcoin amount that will be sent to the payee. Before starting the payout, the payee needs to enter a valid Bitcoin address.
 
 **Step 5: After confirming the payout, the payee is redirected back to your site**  
 After the payout is started, the payee is redirected back to your site.
@@ -381,7 +381,7 @@ https://bitcoin.org/en/getting-started
 
 ### 6.1 Supported processing currencies
 
-**Payment21® supports the following processing currencies for incoming and outgoing transactions. The amounts for all currencies are expressed as decimal numbers.**
+**Payment21® supports the following processing currencies for incoming and outgoing transactions.**
 
  Currency | Description
 ------------|-------------
@@ -390,6 +390,8 @@ https://bitcoin.org/en/getting-started
  GBP          | British Pound
  CHF          | Swiss Franc    
  JPY          | Japanese Yen
+
+The amounts for all currencies are expressed as decimal numbers.
 
 ### 6.2 API Response & Error Codes
 
