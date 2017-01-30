@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.19
+# Payment21® Crypto API 1.20
 
 The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
@@ -24,6 +24,7 @@ Date    | Description        | Initials   | Version
 19.10.16|Add business address to vendor requests|PI|1.17
 31.10.16|Improve description for response error codes|PI|1.18
 20.12.16|Add payout documentation|PI|1.19
+30.01.17|Add more error codes to the API|PI|1.20
 
 ## Confidentiality Notice
 
@@ -417,7 +418,8 @@ The JSON/REST API will return HTTP Status Code 200 if the request was processed 
  INTERNAL_SERVER_ERROR | 500 | An unknown error occurred, please try again later or contact Payment21® for clarification | 2
  INVALID_ARGUMENT_EMAIL | 400 | Invalid email. Please specify valid email address | 118
  INVALID_ARGUMENT_DELIVERY_LEVEL | 400 | Please specify 'deliveryLevel' argument | 119
-
+ ANNUAL_MERCHANT_LIMIT | 400 | The merchant has reached the annual limit. Please contact Payment21® customer support or upgrade your merchant tier | 123
+ VELOCITY_MERCHANT_LIMIT | 400 | The merchant has reached the daily limit. Please contact Payment21® customer support or upgrade your merchant tier | 124
 
 ```
 HTTP/1.1 404 Not Found
@@ -1121,7 +1123,7 @@ This request provides all required information in order to assign a new vendor t
 
 			{
 				"transactionId":"587a1892-18be-4836-aa0c-a7f7255cf974",
-				"redirectTo":"https://app.payment21.com/payment.html#/!/?transactionId=f687a78c-8496-4cbd-a4f9-b3ec107a2abb"
+				"redirectTo":"payment.html#/!/?transactionId=f687a78c-8496-4cbd-a4f9-b3ec107a2abb"
 			}
 
 	+ Schema
@@ -1140,7 +1142,7 @@ This request provides all required information in order to assign a new vendor t
 				  "type": "string",
 				  "minLength": 1,
 				  "maxLength": 250,
-				  "description": "The URL the purchaser needs to be redirected to"
+				  "description": "Relative URL the purchaser needs to be redirected to"
 				}
 			  },
 			  "required": [
@@ -1525,7 +1527,7 @@ This request provides all required information in order to assign a new vendor t
 
 			{
 				"transactionId":"633d4fb2-dd0c-4d5b-87e7-c6b2349adbab",
-				"redirectTo":"https://app.payment21.com/payout.html#/!/?transactionId=633d4fb2-dd0c-4d5b-87e7-c6b2349adbab"
+				"redirectTo":"payout.html#/!/?transactionId=633d4fb2-dd0c-4d5b-87e7-c6b2349adbab"
 			}
 
 	+ Schema
@@ -1544,7 +1546,7 @@ This request provides all required information in order to assign a new vendor t
 				  "type": "string",
 				  "minLength": 1,
 				  "maxLength": 250,
-				  "description": "The URL the payee needs to be redirected to"
+				  "description": "Relative URL the payee needs to be redirected to"
 				}
 			  },
 			  "required": [
