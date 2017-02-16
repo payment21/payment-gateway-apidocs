@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.20
+# Payment21® Crypto API 1.21
 
 The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
@@ -25,6 +25,7 @@ Date    | Description        | Initials   | Version
 31.10.16|Improve description for response error codes|PI|1.18
 20.12.16|Add payout documentation|PI|1.19
 30.01.17|Add more error codes to the API|PI|1.20
+15.02.17|Improve integration steps|PI|1.21
 
 ## Confidentiality Notice
 
@@ -182,7 +183,7 @@ The web service is accessible from https://app.payment21.com/api/mapi, supportin
 
 **Input Parameters to differ or combine merchant ID and vendor ID**
 
-The system creates a new merchant when the 5-Step-Sign-Up is performed on the frontend, hence, there is no separate “CreateMerchant operation” supported through an API call. A merchant ID is assigned to your account automatically. You can find more details under “Sandbox Test”.
+The system creates a new merchant when the 5-Step-Sign-Up is performed on the frontend, hence, there is no separate “CreateMerchant operation” supported through an API call. A merchant ID is assigned to your account automatically. You can find more details under “Integration Steps”.
 
 To start sending transactions you first need to create a vendor using the CreateVendor call.
 
@@ -347,13 +348,11 @@ After the payout is started, the payee is redirected back to your site.
 You can call the API method PayoutStatus at any time to check the status of the payout.
 
 
-## 5 Sandbox API Connectivity Test
+## 5 Integration steps
 
-### 5.1 Merchant Back Office
+### 5.1 Live environment
 
-**During the signup process, you need to test the API connectivity through the sandbox test application in your merchant account back office. This enables you to test your API implementation in an early stage of your onboarding process with Payment21.com.**
-
-To start the sandbox test, login with your merchant account credentials and navigate to the Sandbox Test:
+To start integration on the live environment, login with your merchant account credentials and navigate to the Integration Steps:
 
 ![name](images/sandbox_test.png)
 
@@ -361,17 +360,27 @@ After clicking on “Generate Merchant API Key”, you will see your merchant ID
 
 ![name](images/api_key.png)
 
-### 5.2 Bitcoin Testnet
+Use your merchant ID and API key in the API integration.
+
+### 5.2 Sandbox environment
+
+**Payment21 also provides a separate sandbox environment for testing the Payment21® Bitcoin Cashier System using the Bitcoin Testnet:**
+
+https://sandbox.corp.payment21.com
+
+Please use the following Sandbox Merchant information in your tests on the sandbox environment:
+
+1. Merchant ID: 26875
+2. Vendor ID: 26895
+3. Merchant API Key: bf6a0b07-ae78-4fca-8c82-a0acbea815f6
+
+### 5.3 Bitcoin Testnet
 
 **If you want to test our Bitcoin Cashier System with the Bitcoin Testnet, you need to set up your Test Wallet first.**
 
 The Bitcoin Testnet is an alternative Bitcoin block chain, to be used for testing. Testnet coins are separate and distinct from actual Bitcoins, and are never supposed to have any value. This allows application developers or Bitcoin testers to experiment, without having to use real Bitcoins.
 
 https://en.bitcoin.it/wiki/Testnet
-
-If you want to test the Payment21® Bitcoin Cashier System using the Bitcoin Testnet, you can use our sandbox environment.
-
-https://sandbox.corp.payment21.com
 
 If you want to test the Payment21® Bitcoin Cashier System with real Bitcoins, you need to set up your Bitcoin Wallet and purchase Bitcoin first.
 
