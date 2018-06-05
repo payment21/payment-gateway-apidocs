@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.2
 MAINTAINER Payment 21 Dev Team <support@payment21.com>
 
 RUN apk add --update --no-progress alpine-sdk nodejs unrar bash git
