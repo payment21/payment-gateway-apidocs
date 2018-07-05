@@ -23,7 +23,7 @@ Date    | Description        | Initials   | Version
 07.10.16|Update the sandbox test and payment page|PI|1.16
 19.10.16|Add business address to vendor requests|PI|1.17
 31.10.16|Improve description for response error codes|PI|1.18
-20.12.16|Add payout documentation|PI|1.19
+20.12.16|Add disbursement documentation (i.e. payout)|PI|1.19
 30.01.17|Add more error codes to the API|PI|1.20
 15.02.17|Improve integration steps|PI|1.21
 27.10.17|Update p21PayByCrypto API|PI|1.22
@@ -33,16 +33,19 @@ Date    | Description        | Initials   | Version
 **Contact Information**
 
 Moving Media GmbH
+<br/>
 Support Team
 
 Bahnhofplatz 1-3 / PF#445
+<br/>
 CH-9430 Sankt Margrethen SG
+<br/>
 Switzerland
 
 E-Mail: support@payment21.com
 
 
-## 1 Payment21® API Integration and UI Tools
+## 1. Payment21® API Integration and UI Tools
 
 **In order to begin accepting Bitcoin payments online, you must connect your website to our payment gateway. Clients must register with Payment21® in order to access the API integration details. Some parts of the application are not supported the by the API, however, further tools are available in the client account directly through the UI.**
 
@@ -51,10 +54,12 @@ E-Mail: support@payment21.com
     + Payment21® Cashier Page
     + Payment21® Payout Page
     
+<br/>
 + E-Commerce UI Tools   
     + Payment21® E-Billing
     + Payment21® Button
-
+    
+<br/>
 + OTC Exchange UI Tools
     + Trading Page
     + Buy Crypto
@@ -68,9 +73,9 @@ E-Mail: support@payment21.com
 
 ### 1.2 Payment21® JSON/REST API:
 
-**A merchant can access the Payment21 Web Service by implementing our REST API in the merchant’s site.**
+**A merchant can access the Payment21 Web Service by implementing our REST API in their web application.**
 
-Your software developer integrates the JSON API call directly in your application. If your consumer chooses “crypto currency" (Bitcoin, XBT) as a payment method, the merchant’s system creates the REST request in accordance with the JSON integration documentation and sends it to the Payment21® web service. Payment21® responds by letting your system know whether the information is valid. Your system then displays a confirmation page to the user to confirm the purchase and finalize the transaction. Finally, your system displays a transaction summary to the user containing all payment details as payment confirmation.
+Your software developer integrates the JSON API call directly in your application. If your consumer chooses “cryptocurrency" (Bitcoin, XBT) as a payment method, the merchant’s system creates the REST request in accordance with the JSON integration documentation and sends it to the Payment21® web service. Payment21® responds by letting your system know whether the submitted information is valid. Your system then displays a confirmation page to the user to confirm the purchase and finalize the transaction. Finally, your system displays a transaction summary to the user containing all payment details as payment confirmation.
 
 Benefits for the merchant:
 - Full session control
@@ -83,7 +88,7 @@ Benefits for the merchant:
 
 ![supported use cases](images/your_online_shop_payment_process.png)
 
-**Merchants simply redirect the purchaser to this cashier page where the consumer initiates the Bitcoin payment.**
+**Merchants simply redirect the purchaser to this cashier page, where the consumer initiates the Bitcoin payment.**
 
 At the Payment21® Cashier Page, your consumer will see the required details for payment directly on our website. The consumer data will be transferred to the Payment21® system for verification, validation and processing. After the purchaser has completed the payment, he/she is redirected back to your site where you can display a confirmation page.
 
@@ -131,10 +136,9 @@ See an example on the demo store: https://app.payment21.com/demoshop.html.
 ### 1.4 Payment21® Payout Page
 
 **We provide a checkout user interface for payout requests allowing the payee to specify a Bitcoin address for receiving payouts.**
+**Merchants simply redirect the payee to this payout page where the payee initiates the Bitcoin payout request.**
 
 ![payout_request](images/your_payout_request.png)
-
-**Merchants simply redirect the payee to this payout page where the payee initiates the Bitcoin payout request.**
 
 Once the payee enters the Bitcoin address, the payout is initialized and waiting to be further processed. The payee data will be transferred to the Payment21® system for verification, validation and processing. Depending on the configuration, the payee needs to go through the AML/KYC verification process before being eligible to accept the payout.
 
@@ -152,13 +156,13 @@ See an example on the demo payout: https://app.payment21.com/demopayout.html.
 <!--6. Call the API method PayoutStatus to check the status of the payout-->
 
 
-## 2 Payment21® JSON/REST API
+## 2. Payment21® JSON/REST API
 
 **The integration of Payment21® functionality is effected directly in the merchant's system using REST.**
 
-If the merchant’s consumer chooses the crypto payment method, then the merchant’s system creates the REST-request by using the matching JSON definition and sends it to the Payment21® REST web service. The Payment21® REST web service responds by returning the corresponding JSON reply to let your system know whether the request was valid and with generated data for the payment in case of successful request. Your page then uses this reply to display a confirmation page to the consumer. The consumer has to confirm the purchase to finalize the transaction. You can display the transaction summary to the user with all payment details as payment confirmation.
+If the merchant’s consumer chooses the crypto payment method, then the merchant’s system creates the REST-request by using the matching JSON definition and sends it to the Payment21® REST web service. The Payment21® REST web service responds by returning the corresponding JSON reply, to let your system know whether the request was valid, containing generated data for the payment, in case of a successful request. Your page then uses this reply to display a confirmation page to the consumer. The consumer has to confirm the purchase to finalize the transaction. You can display the transaction summary to the user with all payment details as a payment confirmation.
 
-The Payment21® JSON/REST web service contains additional endpoints to provide detailed information about each ongoing payment.
+The Payment21® JSON/REST web service contains additional endpoints, to provide detailed information about each ongoing payment.
 
 
 ### 2.1 JSON/REST API Integration: How to integrate
@@ -186,15 +190,15 @@ The web service is accessible from https://app.payment21.com/api/mapi, supportin
 
 **Input Parameters to differ or combine merchant ID and vendor ID**
 
-The system creates a new merchant when the 5-Step-Sign-Up is performed on the frontend, hence, there is no separate “CreateMerchant operation” supported through an API call. A merchant ID is assigned to your account automatically. You can find more details under “Integration Steps”.
+The system creates a new merchant when the 5-Step-Sign-Up is performed on the frontend, hence, there is no separate “CreateMerchant" operation supported through an API call. A merchant ID is assigned to your account automatically. You can find more details regarding this subject under “Integration Steps”.
 
-To start sending transactions you first need to create a vendor using the CreateVendor call.
+To start sending transactions, you first need to create a vendor using the "CreateVendor" call.
 
 Merchants can create multiple vendors (i.e. sub-merchant accounts) to allocate transactions to specific vendors, shops, agents, branches, business divisions etc.
 
 If a merchant does not have multiple vendors, the merchant has to create a single vendor and treat these entry fields as wildcards. In this scenario, enter the company name of the merchant into the field “Company” etc. This wildcard vendor has to utilize the default merchant data and keep track of all transactions processed by the merchant.
 
-The merchant account is the parent account used for settling all the funds associated to the merchant and its vendors.
+The merchant account is the parent account, used for settling all the funds associated to the merchant and its vendors.
 
 
 ### 2.3 Calling Conventions
@@ -203,7 +207,7 @@ The merchant account is the parent account used for settling all the funds assoc
 
 Following common REST conventions, the API uses JSON (JavaScript Object Notation) to encode values and objects, which is widespread used and human-readable to allow easy debugging.
 
-If the request can be fulfilled by Payment21®, the HTTP status code 200 will be returned, along with an optional response object containing further details.
+If the request can be fulfilled by Payment21®, the HTTP status code 200 will be returned, along with an optional response object, containing further details.
 
 If the request is malformed, contains wrong or missing data, or we cannot process the request for any other reason, a HTTP status code different to 200 will be returned, e.g. 404 if the requested entity does not exist.
 
@@ -224,17 +228,17 @@ Please be aware that your API key provides access to the Payment21® system in y
 If your API key is lost or compromised, Payment21® can create a new one for you. For security reasons, we cannot recover your previous API key.
 
 
-## 3 Payment21® Cashier Page
+## 3. Payment21® Cashier Page
 
 ### 3.1 Introduction
 
 **The cashier page is made for a simple and fast integration and provides all the necessary user interactions of the purchaser to complete the payment.**
 
-You first announce the payment to Payment21® via the P21PayByCrypto API endpoint and redirect the purchaser to the cashier page hosted by Payment21.com. After the Bitcoin payment is made, the purchaser is redirected back to your site or confirmation page.
+You first announce the payment to Payment21® via the P21PayByCrypto API endpoint and redirect the purchaser to the cashier page hosted by [Payment21.com](https://www.payment21.com). After the Bitcoin payment is made, the purchaser is redirected back to your site or confirmation page.
 
-Once you have integrated our cashier page, your consumer can pay for goods and services purchased by using “crypto currency” (Bitcoin, XBT). The API will transfer consumer data to the Payment21®-system for processing. **Please note that the minimum payment amount is 8 USD**
+Once you have integrated our cashier page, your consumer can pay for goods and services purchased by using “cryptocurrency” (Bitcoin, XBT). The API will transfer consumer data to the Payment21®-system for processing. **Please note that the minimum payment amount is 8 USD.**
 
-If a consumer profile already exists in your database (that is, the merchant’s database), you can prefill fields such as consumer first name, last name, address and other contact information automatically. The consumer enters other data fields related to the payment details and makes the payment. We have additional security fields such as ID document, passport number and driver’s license number. The data entered will be stored in the Payment21® database for future resolution.
+If a consumer profile already exists in your database (that is, the merchant’s database), you can prefill fields such as the consumer first name, last name, address and other contact information automatically. The consumer adds data related to the payment details into the fields, and makes the payment. We have additional security fields requesting details such as the consumer’s ID document, passport number and driver’s license number. The data entered will be stored in the Payment21® database for future resolution.
 
 Payment21® will send an email to the consumer regarding his/her payment status. Additionally, the merchant receives a confirmation email containing the details of the transaction and purchase.
 
@@ -243,7 +247,7 @@ Payment21® will send an email to the consumer regarding his/her payment status.
 
 **Once your site is ready to use the API, you can add Payment21® crypto payments to your payment options.**
 
-Your consumer can now choose to pay by “crypto currency” (Bitcoin, XBT).
+Your consumer can now choose to pay by “cryptocurrency” (Bitcoin, XBT).
 
 Before the payment page is displayed for the consumer, the merchant sends information about the order through the API for verification, validation and authentication. This verification is done on the Payment21® side. Once the order information is successfully verified, the consumer will be redirected to the Payment21® crypto payment page. This is a secure form, which allows the consumer to pay using Bitcoin. See an example on the demo store: https://app.payment21.com/demoshop.html.
 
@@ -251,7 +255,7 @@ As the first step, consumers have to explicitly agree with the Terms and Conditi
 
 ![name](images/payment_details.jpg)
 
-After confirming, the consumer is shown a QR-Code along with their payment details.
+After the confirmation, the consumer is shown a QR-Code along with their payment details.
 
 ![name](images/payment_process.jpg)
 
@@ -261,9 +265,9 @@ Once the consumer completes the crypto payment, it is tracked over the blockchai
 
 After the submitted transaction has been sent to the Payment21® system and is detected on the blockchain, the user is shown a confirmation page and a link that redirects them to the merchant’s site.
 
-The consumer of the crypto transaction gets an email receipt mentioning purchasing details and the status of the payment "Approved" once the transaction is successful.
+The consumer of the crypto transaction gets an email receipt, mentioning purchasing details and the status of the payment "Approved", once the transaction is successful.
 
-You as a merchant also get a notification email. This email message has the consumer’s transaction information such as amount and the transaction status of "Approved" on it.
+You as a merchant also get a notification email. This email message contains the consumer’s transaction information, such as amount and the transaction status of "Approved" on it.
 
 
 ### 3.3 Typical Inbound Payment Use Case 
@@ -281,9 +285,11 @@ The payment process is as follows:
 
 
 **Step 1: The purchaser selects Payment21® for checkout**
+<br/>
 To enable purchasers to pay with Payment21, you have to add an option in your application.
 
 **Step 2: Your application calls the API method “P21PayByCrypto”**
+<br/>
 Your application calls the API method P21PayByCrypto to initialize the payment. This call includes details such as the amount, vendor and purchaser details.
 
 Note: If you have not already created a vendor, you will need to create one using the API method CreateVendor.
@@ -293,25 +299,29 @@ The P21PayByCrypto response contains a unique transaction-ID, which should be st
 The second value returned is a URL used subsequently.
 
 **Step 3: Your site redirects the purchaser to the returned URL**
+<br/>
 You should now redirect the purchaser to the URL of the Payment21® Cashier Page retrieved in the P21PayByCrypto Call.
 
 **Step 4: The purchaser will see the cashier page and pay by Bitcoin**
+<br/>
 As shown in the previous section, the purchaser can see the currency amount, fair value rate and the resulting Bitcoin amount. He can use a local Bitcoin wallet or a QR-Code to send the requested amount to Payment21®.
 
 **Step 5: After the payment is received, the purchaser is redirected back to your site**
+<br/>
 We are continuously monitoring the Bitcoin blockchain to detect the Bitcoin transaction sent by the purchaser instantly. After the requested amount is received, we will redirect the purchaser from our cashier page back to your site. The URL will also include the Transaction-ID returned in step two.
 
 **Step 6: Call the API method PaymentStatus to check if the payment was successful**
+<br/>
 You can call the API method PaymentStatus to check if the payment was successful and show a confirmation page to the purchaser.
 
 Note: You can query the PaymentStatus at any time. We recommend checking the status after a short period of time in case the purchaser has interrupted the flow (e.g. by closing their browser window).
 
 
-## 4 Payment21® Payout Page
+## 4. Payment21® Payout Page
 
 ### 4.1 Introduction
 
-**The payout page is made for a simple and fast integration and provides all the necessary user interactions of the payee to complete the payout.**
+**The payout page is made for a quick and simple integration and provides all the necessary user interactions of the payee to complete the payout.**
 
 ![payout_page](images/your_payout_request_sample.png)
 
@@ -329,28 +339,30 @@ Note: You can query the PaymentStatus at any time. We recommend checking the sta
 
 
 **Step 1: The payee selects Payment21® for withdrawals (payout)**
-You have to add an option in your application for withdrawals (payout)
+<br/>
+You have to add an option in your application for withdrawals (payout).
 
 **Step 2: Your application calls the API method “P21Payout”**
-Your application calls the API method P21Payout to initialize the payout. This call includes details such as the amount, vendor and payee details.
-
-The P21Payout response contains a unique transaction-ID, which should be stored. You can use it to retrieve the status of the payout.
-
-The second value returned is a redirectURL used subsequently.
+<br/>
+Your application calls the API method P21Payout to initialize the payout. This call includes details such as the amount of the chosen cryptocurrency, vendor and payee details. The P21Payout response contains a unique transaction-ID, which should be stored. You can use it to retrieve the status of the payout. The second value which is returned is a redirectURL used subsequently.
 
 **Step 3: Your site redirects the payee to the returned redirectURL**
+<br/>
 You should now redirect the payee to the redirectURL which actually represents the Payment21® Payout Page.
 
 **Step 4: The payee views the Payment21® Payout Page, enters the Bitcoin address and starts the payout**
+<br/>
 The payee can see the requested payout amount and the corresponding bitcoin amount that will be sent to the payee. Before starting the payout, the payee needs to enter a valid Bitcoin address.
 
 **Step 5: After confirming the payout, the payee is redirected back to your site**
-After the payout is started, the payee is redirected back to your site.
+<br/>
+After the payout has been started, the payee is redirected back to your site.
 
 **Step 6: Call the API method PayoutStatus to check the status of the payout**
+<br/>
 You can call the API method PayoutStatus at any time to check the status of the payout.
 
-## 5 Payment21® E-Billing
+## 5. Payment21® E-Billing
 
 ### 5.1 Introduction
 
@@ -362,7 +374,7 @@ There is no need to integrate an E-Billing API, since we are generating a unique
 
 https://payment21.com/support/faqs
 
-## 6 Payment21® Button
+## 6. Payment21® Button
 
 ### 6.1 Introduction
 
@@ -376,17 +388,17 @@ https://payment21.com/support/faqs
 
 The generated button (HTML) can be copied to any site, providing a simple way of making an inbound payment with just one click.
 
-## 7 Payment21® OTC Exchange
+## 7. Payment21® OTC Exchange
 
 ### 7.1 Trading Page
 
 **Payment21® operates an enterprise-level OTC Exchange, processing domestic and international buy & sell transactions through bank transfers.**
 
 There is no JSON/REST API for the Payment21® OTC Exchange. The only interaction with the OTC Exchange feature is through our Payment21.com UI. When the user logs in to the Payment21 application and navigates through the menus, he will find the OTC Exchange right away.
+The UI is built to be completely self-explanatory and therefore does not require a guide.
 
 ![name](images/payment21_otc_exchange.png)
 
-The UI is built to be completely self-explanatory and therefore does not require a guide.
 If questions regarding the OTC Exchange arise, please refer to this link:
 
 https://payment21.com/support/faqs
@@ -404,11 +416,11 @@ There is no API to create buy trades. This is only done through the Payment21.co
 There is no API to create sell trades. This is only done through the Payment21.com UI (when logged in). The UI is built to be completely self-explanatory and therefore does not require a guide. 
 
 
-## 8 Integration steps E-Commerce
+## 8. Integration steps E-Commerce
 
 ### 8.1 Live environment
 
-To start integration on the live environment, login with your merchant account credentials and navigate to the Integration Steps:
+To start integration on the live environment, log in with your merchant account and navigate to the integration steps:
 
 ![name](images/sandbox_test.png)
 
@@ -420,30 +432,30 @@ Use your merchant ID and API key in the API integration.
 
 ### 8.2 Sandbox environment
 
-**Payment21 also provides a separate sandbox environment for testing the Payment21® Bitcoin Cashier System using the Bitcoin Testnet:**
+**Payment21 also provides a separate sandbox environment to test the Payment21® Bitcoin Cashier System, using the Bitcoin Testnet:**
 
 https://sandbox.corp.payment21.com
 
-Please use the following Sandbox Merchant information in your tests on the sandbox environment:
+Please use the following Sandbox Merchant information in your tests in the sandbox environment:
 
 1. Merchant ID: 26875
 2. Vendor ID: 26895
-3. Merchant API Key: **Generate one-time new API-Key from Sandbox**
+3. Merchant API Key: Generate one-time new API-Key from Sandbox
 
 ### 8.3 Bitcoin Testnet
 
 **If you want to test our Bitcoin Cashier System with the Bitcoin Testnet, you need to set up your Test Wallet first.**
 
-The Bitcoin Testnet is an alternative Bitcoin block chain, to be used for testing. Testnet coins are separate and distinct from actual Bitcoins, and are never supposed to have any value. This allows application developers or Bitcoin testers to experiment, without having to use real Bitcoins.
+The Bitcoin Testnet is an alternative Bitcoin blockchain, to be used for testing. Testnet coins are separate and distinct from actual bitcoins, and are never supposed to have any value. This allows application developers and/or Bitcoin testers to experiment, without having to use real bitcoins.
 
 https://en.bitcoin.it/wiki/Testnet
 
-If you want to test the Payment21® Bitcoin Cashier System with real Bitcoins, you need to set up your Bitcoin Wallet and purchase Bitcoin first.
+If you want to test the Payment21® Bitcoin Cashier System with real bitcoins, you need to set up your Bitcoin Wallet and purchase bitcoin first.
 
 https://bitcoin.org/en/getting-started
 
 
-## 9 Appendix
+## 9. Appendix
 
 ### 9.1 Supported processing currencies
 
@@ -463,7 +475,7 @@ The amounts for all currencies are expressed as decimal numbers.
 
 **Payment21® provide a full set of response and error codes.**
 
-The JSON/REST API will return HTTP Status Code 200 if the request was processed successfully. Other codes signal errors as defined in the HTTP Protocol. To provide detailed information about the cause, an error object will be returned. It contains a field “error” with a string that is described in the table below.
+The JSON/REST API will return HTTP Status Code 200 if the request was processed successfully. Other codes signal errors as defined in the HTTP Protocol. To provide detailed information about the cause, an error object will be returned. It contains a field called “error” with a string that is described in the table below.
 
  Error | HTTP Status | Message | Code 
 ------------|-------------|--------------------------|------------
