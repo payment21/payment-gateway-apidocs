@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.23
+# Payment21® Crypto API 1.24
 
 The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
@@ -28,6 +28,7 @@ Date    | Description        | Initials   | Version
 15.02.17|Improve integration steps|PI|1.21
 27.10.17|Update p21PayByCrypto API|PI|1.22
 17.05.18|Add Payout Page, E-Billing, Payment Button and OTC Exchange details|DR|1.23
+08.03.19|Update payout flow|PI|1.24
 
 
 **Contact Information**
@@ -135,12 +136,12 @@ See an example on the demo store: https://app.payment21.com/demoshop.html.
 
 ### 1.4 Payment21® Payout Page
 
-**We provide a checkout user interface for payout requests allowing the payee to specify a Bitcoin address for receiving payouts.**
-**Merchants simply redirect the payee to this payout page where the payee initiates the Bitcoin payout request.**
+**We provide a checkout user interface for payout requests allowing the payee to Login and receive a payout.**
+**Merchants simply redirect the payee to this payout page where the payee can Login and initiate the Bitcoin payout request.**
 
 ![payout_request](images/your_payout_request.png)
 
-Once the payee enters the Bitcoin address, the payout is initialized and waiting to be further processed. The payee data will be transferred to the Payment21® system for verification, validation and processing. Depending on the configuration, the payee needs to go through the AML/KYC verification process before being eligible to accept the payout.
+Once the payee logins, the payee needs to go through the AML/KYC verification process before being eligible to accept the payout.
 
 See an example on the demo payout: https://app.payment21.com/demopayout.html.
 
@@ -332,13 +333,6 @@ Note: You can query the PaymentStatus at any time. We recommend checking the sta
 
 **The integration of the Payment21® payout page consists of a few steps.**
 
-1. The payee selects Bitcoin for withdrawals (payout)
-2. Your application calls the API method “P21Payout”
-3. Your site redirects the payee to the returned redirectURL
-4. The payee views the Payment21® Payout Page, enters the Bitcoin address and starts the payout
-5. After confirming the payout, the payee is redirected back to your site
-6. Call the API method PayoutStatus to check the status of the payout
-
 
 **Step 1: The payee selects Payment21® for withdrawals (payout)**
 <br/>
@@ -352,13 +346,13 @@ Your application calls the API method P21Payout to initialize the payout. This c
 <br/>
 You should now redirect the payee to the redirectURL which actually represents the Payment21® Payout Page.
 
-**Step 4: The payee views the Payment21® Payout Page, enters the Bitcoin address and starts the payout**
+**Step 4: The payee views the Payment21® Payout Page, logs-in, completes AML/KYC-verification, and enters the Bitcoin address**
 <br/>
-The payee can see the requested payout amount and the corresponding bitcoin amount that will be sent to the payee. Before starting the payout, the payee needs to enter a valid Bitcoin address.
+The payee can see the requested payout amount and the corresponding bitcoin amount that will be sent to the payee. Before starting the payout, the payee needs to login, complete AML/KYC-verification, and enters a valid Bitcoin address.
 
-**Step 5: After confirming the payout, the payee is redirected back to your site**
+**Step 5: The payee confirms the payout**
 <br/>
-After the payout has been started, the payee is redirected back to your site.
+After the action items of Step 4 have been completed, the payee confirms the payout. 
 
 **Step 6: Call the API method PayoutStatus to check the status of the payout**
 <br/>
@@ -1177,7 +1171,7 @@ This request provides all required information in order to assign a new vendor t
                 },
                 "redirectBackToUrl" : {
                   "type" : "string",
-                  "description" : "IPN endpoint for payment status changes"
+                  "description" : "Redirect URL"
                 }
               },
               "required": [
@@ -1721,6 +1715,14 @@ This request provides all required information in order to assign a new vendor t
                   "type" : "string",
                   "description" : "Consumer's country, e.g. 'United Kingdom'",
                   "maxLength" : 50
+                },
+                "notificationUrl" : {
+                  "type" : "string",
+                  "description" : "IPN endpoint for payout status changes"
+                },
+                "redirectBackToUrl" : {
+                  "type" : "string",
+                  "description" : "Redirect URL"
                 }
               },
               "required": [

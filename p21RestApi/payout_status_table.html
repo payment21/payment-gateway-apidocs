@@ -11,12 +11,12 @@
 			<td>The status of the requested payout.<br/>
 				Possible values:<br/>
 				<strong>Initialized:</strong> The Payout has been initialized<br/>
-				<strong>Awaiting_Verification:</strong> The payee needs to trigger the KYC verification process in Payment21 <br/>
-				<strong>Verified:</strong> The payee has succesfully finished the KYC process in Payment21 and is ready to accept the payout<br/>
-				<strong>Awaiting_Funding:</strong> Awaiting the necessary fundings for processing the payout<br/>
-				<strong>Funded:</strong> The payout has been funded and is ready to be sent to the payee<br/>
-				<strong>Awaiting_Confirmation:</strong> The transaction was sent to the payee. Waiting for receipt confirmation<br/>
-				<strong>Finished:</strong> The Payout has been sent and confirmed by the payee<br/>
+				<strong>Verified:</strong> The Payee confirms the payout<br/>
+				<strong>Awaiting_Funding:</strong> Fiat funds get converted to cryptocurrency<br/>
+				<strong>Funded:</strong> Funds have been exchanged in cryptocurrency<br/>
+				<strong>Dangling:</strong> "Dangling" equals to "Pending" for manual processing by Payment21<br/>
+				<strong>Awaiting_Confirmation:</strong> The transaction was sent to the payee. Waiting for specified number ofconfirmations<br/>
+				<strong>Finished:</strong> The Payout is successful<br/>
 				<strong>Expired:</strong> The Payout has expired<br/>
 				<strong>Canceled:</strong> The Payout has been canceled by the payee<br/>
 				<strong>Failed:</strong> The Payout has failed for other reasons<br/>
