@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.24
+# Payment21® Crypto API 1.25
 
 The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
@@ -29,6 +29,7 @@ Date    | Description        | Initials   | Version
 27.10.17|Update p21PayByCrypto API|PI|1.22
 17.05.18|Add Payout Page, E-Billing, Payment Button and OTC Exchange details|DR|1.23
 08.03.19|Update payout flow|PI|1.24
+15.07.19|Add off-chain payments|PI|1.25
 
 
 **Contact Information**
@@ -76,7 +77,7 @@ E-Mail: support@payment21.com
 
 **A merchant can access the Payment21 Web Service by implementing our REST API in their web application.**
 
-Your software developer integrates the JSON API call directly in your application. If your consumer chooses “cryptocurrency" (Bitcoin, XBT) as a payment method, the merchant’s system creates the REST request in accordance with the JSON integration documentation and sends it to the Payment21® web service. Payment21® responds by letting your system know whether the submitted information is valid. Your system then displays a confirmation page to the user to confirm the purchase and finalize the transaction. Finally, your system displays a transaction summary to the user containing all payment details as payment confirmation.
+Your software developer integrates the JSON API call directly in your application. If your consumer chooses “cryptocurrency" (on-chain or off-chain, XBT) as a payment method, the merchant’s system creates the REST request in accordance with the JSON integration documentation and sends it to the Payment21® web service. Payment21® responds by letting your system know whether the submitted information is valid. Your system then displays a confirmation page to the user to confirm the purchase and finalize the transaction. Finally, your system displays a transaction summary to the user containing all payment details as payment confirmation.
 
 Benefits for the merchant:
 - Full session control
@@ -85,11 +86,11 @@ Benefits for the merchant:
 
 ### 1.3 Payment21® Cashier Page:
 
-**We provide a checkout user interface containing payment details such as the Bitcoin address and a corresponding QR-Code.**
+**We provide a checkout user interface containing payment details such as the Bitcoin address or payment request and a corresponding QR-Code.**
 
 ![supported use cases](images/your_online_shop_payment_process.png)
 
-**Merchants simply redirect the purchaser to this cashier page, where the consumer initiates the Bitcoin payment.**
+**Merchants simply redirect the purchaser to this cashier page, where the consumer initiates the on-chain or off-chain payment.**
 
 At the Payment21® Cashier Page, your consumer will see the required details for payment directly on our website. The consumer data will be transferred to the Payment21® system for verification, validation and processing. After the purchaser has completed the payment, he/she is redirected back to your site where you can display a confirmation page.
 
@@ -237,7 +238,7 @@ If your API key is lost or compromised, Payment21® can create a new one for you
 
 You first announce the payment to Payment21® via the P21PayByCrypto API endpoint and redirect the purchaser to the cashier page hosted by [Payment21.com](https://www.payment21.com). After the Bitcoin payment is made, the purchaser is redirected back to your site or to the confirmation page.
 
-Once you have integrated our cashier page, your consumer can pay for goods and services by using “cryptocurrency” (Bitcoin, XBT). The API will transfer the consumer data to the Payment21®-system for processing. **Please note that the minimum payment amount is 8 USD.**
+Once you have integrated our cashier page, your consumer can pay for goods and services by using “cryptocurrency” (on-chain or off-chain, XBT). The API will transfer the consumer data to the Payment21®-system for processing. **Please note that the minimum payment amount for on-chain is 8 USD, for off-chain no minimum payment amount applies.**
 
 If a consumer profile already exists in your database (that is, the merchant’s database), you can prefill fields such as the consumer first name, last name, address and other contact information automatically. The consumer adds data related to the payment details into the fields, and makes the payment. We have additional security fields requesting details such as the consumer’s ID document, passport number and driver’s license number. The data entered will be stored in the Payment21® database for future resolution.
 
@@ -248,25 +249,25 @@ Payment21® will send an email to the consumer regarding his/her payment status.
 
 **Once your site is ready to use the API, you can add Payment21® crypto payments to your payment options.**
 
-Your consumer can now choose to pay with “cryptocurrency” (Bitcoin, XBT).
+Your consumer can now choose to pay with “cryptocurrency” (on-chain or off-chain, XBT).
 
 Before the payment page is displayed for the consumer, the merchant sends information about the order through the API for verification, validation and authentication. This verification is done on the Payment21® side. Once the order information is successfully verified, the consumer will be redirected to the Payment21® crypto payment page. This is a secure form, which allows the consumer to pay using Bitcoin. See an example on the demo store: 
 <br/>
 https://app.payment21.com/demoshop.html.
 
-As the first step, consumers have to explicitly agree with the Terms and Conditions by marking a checkbox and clicking “Start Payment”.
+As the first step, consumers have to explicitly agree with the Terms and Conditions by marking a checkbox and selecting the payment-type on-chain or off-chain.
 
 ![name](images/payment_details.jpg)
 
-After the confirmation, the consumer is shown a QR-Code along with their payment details.
+Depending on the payment type selected, the consumer is shown a QR-code along with their payment details.
 
 ![name](images/payment_process.jpg)
 
-Consumers will see the crypto payment page with the QR-Code on the Payment21® cashier page. The consumer has to accept and submit the crypto payment using their Bitcoin wallet.
+Consumers will see the crypto payment page with the QR-Code on the Payment21® cashier page. The consumer has to accept and submit the crypto payment using their Lightning or Bitcoin wallet depending on the payment type selected.
 
-Once the consumer completes the crypto payment, it is tracked over the blockchain.
+Depending on the payment type, once the consumer completes the crypto payment, on-chain transactions can be tracked over the blockchain, off-chain transactions get cleared instantaneously.
 
-After the submitted transaction has been sent to the Payment21® system and is detected on the blockchain, the user is shown a confirmation page and a link that redirects them to the merchant’s site.
+After the submitted transaction has been sent to the Payment21® system and has been detected by other Bitcoin nodes, the user is shown a confirmation page and a link that redirects them to the merchant’s site.
 
 The consumer of the crypto transaction gets an email receipt, mentioning purchasing details and the status of the payment "Approved", once the transaction is successful.
 
@@ -282,7 +283,7 @@ The payment process is as follows:
 1. The purchaser selects Payment21® for checkout
 2. Your application calls the API method “P21PayByCrypto”
 3. Your site redirects the purchaser to the returned URL
-4. The purchaser will see the cashier page and pay by Bitcoin
+4. The purchaser will see the cashier page and pay by Crypto
 5. After the payment is received, the purchaser is redirected back to your site
 6. Call the API method PaymentStatus to check if the payment was successful
 
@@ -307,7 +308,7 @@ You should now redirect the purchaser to the URL of the Payment21® Cashier Page
 
 **Step 4: The purchaser will see the cashier page and pay by Bitcoin**
 <br/>
-As shown in the previous section, the purchaser can see the currency amount, fair value rate and the resulting Bitcoin amount. He can use a local Bitcoin wallet or a QR-Code to send the requested amount to Payment21®.
+As shown in the previous section, the purchaser can see the currency amount, fair value rate and the resulting Bitcoin amount. He can use a local Lightning or Bitcoin wallet and use a QR-Code to send the requested amount to Payment21®.
 
 **Step 5: After the payment is received, the purchaser is redirected back to your site**
 <br/>
@@ -431,11 +432,13 @@ Use your merchant ID and API key in the API integration.
 **Payment21 also provides a separate sandbox environment to test the Payment21® Bitcoin Cashier System, using the Bitcoin Testnet:**
 
 https://sandbox.corp.payment21.com
+Username: sandboxtestapi21@mailinator.com
+Password: Abcd123456*
 
 Please use the following Sandbox Merchant information in your tests in the sandbox environment:
 
-1. Merchant ID: 26875
-2. Vendor ID: 26895
+1. Merchant ID: 1024210
+2. Vendor ID: 1024213
 3. Merchant API Key: Generate one-time new API-Key from Sandbox
 
 ### 8.3 Bitcoin Testnet
