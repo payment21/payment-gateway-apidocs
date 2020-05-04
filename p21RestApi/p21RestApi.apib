@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://app.payment21.com
 
-# Payment21® Crypto API 1.25
+# Payment21® Crypto API 1.26
 
 The purpose of this document is to describe the requirements, usage, implementation and purpose of the Payment21® Application Programming Interface (API). The API will allow merchants to send payment requests through a consistently available online interface, which can integrate well with any of their existing systems.
 
@@ -30,6 +30,7 @@ Date    | Description        | Initials   | Version
 17.05.18|Add Payout Page, E-Billing, Payment Button and OTC Exchange details|DR|1.23
 08.03.19|Update payout flow|PI|1.24
 15.07.19|Add off-chain payments|PI|1.25
+04.05.20|Change payment minimum amount|PI|1.26
 
 
 **Contact Information**
@@ -238,7 +239,7 @@ If your API key is lost or compromised, Payment21® can create a new one for you
 
 You first announce the payment to Payment21® via the P21PayByCrypto API endpoint and redirect the purchaser to the cashier page hosted by [Payment21.com](https://www.payment21.com). After the Bitcoin payment is made, the purchaser is redirected back to your site or to the confirmation page.
 
-Once you have integrated our cashier page, your consumer can pay for goods and services by using “cryptocurrency” (on-chain or off-chain, XBT). The API will transfer the consumer data to the Payment21®-system for processing. **Please note that the minimum payment amount for on-chain is 8 USD, for off-chain no minimum payment amount applies.**
+Once you have integrated our cashier page, your consumer can pay for goods and services by using “cryptocurrency” (on-chain or off-chain, XBT). The API will transfer the consumer data to the Payment21®-system for processing. **Please note that the minimum payment amount for on-chain is 27.50 EUR and for off-chain 2.00 USD.**
 
 If a consumer profile already exists in your database (that is, the merchant’s database), you can prefill fields such as the consumer first name, last name, address and other contact information automatically. The consumer adds data related to the payment details into the fields, and makes the payment. We have additional security fields requesting details such as the consumer’s ID document, passport number and driver’s license number. The data entered will be stored in the Payment21® database for future resolution.
 
